@@ -43,7 +43,7 @@ def predict():
     predictions = regressor.predict(X_test)
 
     df = pd.DataFrame(
-        {"Id": X_test.index, "NumProfileLikes": predictions.round()}, dtype=int
+        {"Id": X_test.index, "Predicted": predictions.round()}, dtype=int
     )
 
     return df
