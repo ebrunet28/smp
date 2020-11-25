@@ -1,8 +1,5 @@
 # social media prediction
 
-## run the app
-python app.py
-
 
 ## rules
 - Teams of 3-4
