@@ -3,45 +3,53 @@ import datetime as dt
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
-from loader import Loader
+from preprocess import Loader, Preprocessor
+from preprocess import RGB, Float
 
-loader = Loader()
 
-features = [
-    # "User Name",
-    # "Personal URL",
-    # "Profile Cover Image Status",
-    # "Profile Verification Status",
-    # "Profile Text Color",
-    # "Profile Page Color",
-    # "Profile Theme Color",
-    # "Is Profile View Size Customized?",
-    # "UTC Offset",
-    # "Location",
-    # "Location Public Visibility",
-    # "User Language",
-    # "Profile Creation Timestamp",
-    # "User Time Zone",
-    "Num of Followers",
-    "Num of People Following",
-    "Num of Status Updates",
-    "Num of Direct Messages",
-    # "Profile Category",
-    # "Avg Daily Profile Visit Duration in seconds",
-    # "Avg Daily Profile Clicks",
-    # "Profile Image",
-]
+def predict():
 
-X = loader.train[features]
-y = loader.train["Num of Profile Likes"]
+    loader = Loader()
+    preprocessor = Preprocessor(loader)
+    train_data, test_data = preprocessor.preprocess(
+        [
+            RGB("Profile Text Color"),
+            RGB("Profile Page Color"),
+            RGB("Profile Theme Color"),
+            Float("UTC Offset"),
+            Float("Num of Followers"),
+            Float("Num of People Following"),
+            Float("Num of Status Updates"),
+            Float("Num of Direct Messages"),
+            Float("Avg Daily Profile Visit Duration in seconds"),
+            Float("Avg Daily Profile Clicks"),
+        ]
+    )
 
-regressor = LinearRegression()
-regressor.fit(X=X, y=y)
+    selected = [
+        "num_of_followers",
+        "num_of_people_following",
+        "num_of_status_updates",
+        "num_of_direct_messages",
+    ]
 
-X_test = loader.test[features]
-predictions = regressor.predict(X_test)
+    X = train_data[selected]
+    y = loader.train["Num of Profile Likes"]
 
-df = pd.DataFrame(
-    {"Id": X_test.index, "NumProfileLikes": predictions.round()}, dtype=int
-)
-df.to_csv("submissions/submission_{}".format(dt.datetime.now()), index=False)
+    regressor = LinearRegression()
+    regressor.fit(X=X, y=y)
+
+    X_test = test_data[selected]
+    predictions = regressor.predict(X_test)
+
+    df = pd.DataFrame(
+        {"Id": X_test.index, "NumProfileLikes": predictions.round()}, dtype=int
+    )
+
+    return df
+
+
+if __name__ == "__main__":
+
+    _ = predict()
+    _.to_csv("submissions/submission_{}".format(dt.datetime.now()), index=False)
