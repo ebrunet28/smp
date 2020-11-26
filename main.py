@@ -4,19 +4,16 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 
 from smp.preprocess.base import Loader, Preprocessor
-from smp.preprocess.rgb import (
-    ProfileTextColor,
-    ProfilePageColor,
-    ProfileThemeColor,
-)
 from smp.preprocess.float import (
-    UtcOffset,
     NumOfFollowers,
     NumOfPeopleFollowing,
     NumOfStatusUpdates,
     NumOfDirectMessages,
-    AvgDailyProfileVisitDuration,
-    AvgDailyProfileClicks,
+)
+from smp.preprocess.rgb import (
+    ProfileTextColor,
+    ProfilePageColor,
+    ProfileThemeColor,
 )
 
 
@@ -29,30 +26,20 @@ def predict():
             ProfileTextColor(),
             ProfilePageColor(),
             ProfileThemeColor(),
-            UtcOffset(),
             NumOfFollowers(),
             NumOfPeopleFollowing(),
             NumOfStatusUpdates(),
             NumOfDirectMessages(),
-            AvgDailyProfileVisitDuration(),
-            AvgDailyProfileClicks(),
         ]
     )
 
-    selected = [
-        "num_of_followers",
-        "num_of_people_following",
-        "num_of_status_updates",
-        "num_of_direct_messages",
-    ]
-
-    X = train_data[selected]
+    X = train_data
     y = loader.train["Num of Profile Likes"]
 
     regressor = LinearRegression()
     regressor.fit(X=X, y=y)
 
-    X_test = test_data[selected]
+    X_test = test_data
     predictions = regressor.predict(X_test)
 
     df = pd.DataFrame({"Id": X_test.index, "Predicted": predictions.round()}, dtype=int)
