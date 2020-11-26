@@ -94,3 +94,5 @@ venv/
 # Ignore data dir
 data/raw/*
 data/processed/*
+data/external/*
+data/interim/*

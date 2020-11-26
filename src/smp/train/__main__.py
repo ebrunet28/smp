@@ -2,11 +2,19 @@ import datetime as dt
 
 import pandas as pd
 from sklearn.linear_model import LinearRegression
-
-from smp.features.features import Loader, Preprocessor
-from smp.features.rgb import RGB
-from smp.features.float import Float
 from smp import submissions_dir
+from smp.features.features import Loader, Preprocessor
+from smp.features.float import (
+    NumOfFollowers,
+    NumOfPeopleFollowing,
+    NumOfStatusUpdates,
+    NumOfDirectMessages,
+)
+from smp.features.rgb import (
+    ProfileTextColor,
+    ProfilePageColor,
+    ProfileThemeColor,
+)
 
 
 def predict():
@@ -15,33 +23,23 @@ def predict():
     preprocessor = Preprocessor(loader)
     train_data, test_data = preprocessor.preprocess(
         [
-            RGB("Profile Text Color"),
-            RGB("Profile Page Color"),
-            RGB("Profile Theme Color"),
-            Float("UTC Offset"),
-            Float("Num of Followers"),
-            Float("Num of People Following"),
-            Float("Num of Status Updates"),
-            Float("Num of Direct Messages"),
-            Float("Avg Daily Profile Visit Duration in seconds"),
-            Float("Avg Daily Profile Clicks"),
+            ProfileTextColor(),
+            ProfilePageColor(),
+            ProfileThemeColor(),
+            NumOfFollowers(),
+            NumOfPeopleFollowing(),
+            NumOfStatusUpdates(),
+            NumOfDirectMessages(),
         ]
     )
 
-    selected = [
-        "num_of_followers",
-        "num_of_people_following",
-        "num_of_status_updates",
-        "num_of_direct_messages",
-    ]
-
-    X = train_data[selected]
+    X = train_data
     y = loader.train["Num of Profile Likes"]
 
     regressor = LinearRegression()
     regressor.fit(X=X, y=y)
 
-    X_test = test_data[selected]
+    X_test = test_data
     predictions = regressor.predict(X_test)
 
     df = pd.DataFrame({"Id": X_test.index, "Predicted": predictions.round()}, dtype=int)

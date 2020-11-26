@@ -1,13 +1,5 @@
-from smp import data_dir
 import pandas as pd
-
-
-class Feature:
-    def __init__(self):
-        pass
-
-    def __call__(self, loader, train_records, test_records):
-        pass
+from smp import data_dir
 
 
 class Loader:
@@ -18,6 +10,19 @@ class Loader:
         self.test: pd.DataFrame = pd.read_csv(
             data_dir / "raw" / "test.csv", index_col="Id"
         )
+
+
+class Feature:
+    def __init__(self, var_name):
+        self.col_name = var_name
+        self.var_name = var_name.lower().replace(" ", "_")
+
+    def __call__(self, loader, train_records, test_records):
+        self.convert(loader.train, train_records)
+        self.convert(loader.test, test_records)
+
+    def convert(self, data, records):
+        raise NotImplemented
 
 
 class Preprocessor:
