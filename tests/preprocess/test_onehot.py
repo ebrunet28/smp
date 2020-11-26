@@ -1,7 +1,7 @@
 import unittest
 
-from smp.preprocess.base import Loader, Preprocessor
-from smp.preprocess.onehot import (
+from smp.features.features import Loader, Preprocessor
+from smp.features.onehot import (
     PersonalURL,
     ProfileCoverImageStatus,
     ProfileVerificationStatus,
