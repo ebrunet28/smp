@@ -3,11 +3,13 @@ import datetime as dt
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
-from preprocess import Loader, Preprocessor
-from preprocess import (
+from smp.preprocess.base import Loader, Preprocessor
+from smp.preprocess.rgb import (
     ProfileTextColor,
     ProfilePageColor,
     ProfileThemeColor,
+)
+from smp.preprocess.float import (
     UtcOffset,
     NumOfFollowers,
     NumOfPeopleFollowing,
