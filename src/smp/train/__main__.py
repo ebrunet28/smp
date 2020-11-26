@@ -3,8 +3,10 @@ import datetime as dt
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
-from preprocess import Loader, Preprocessor
-from preprocess import RGB, Float
+from smp.features.features import Loader, Preprocessor
+from smp.features.rgb import RGB
+from smp.features.float import Float
+from smp import submissions_dir
 
 
 def predict():
@@ -42,9 +44,7 @@ def predict():
     X_test = test_data[selected]
     predictions = regressor.predict(X_test)
 
-    df = pd.DataFrame(
-        {"Id": X_test.index, "Predicted": predictions.round()}, dtype=int
-    )
+    df = pd.DataFrame({"Id": X_test.index, "Predicted": predictions.round()}, dtype=int)
 
     return df
 
@@ -52,4 +52,8 @@ def predict():
 if __name__ == "__main__":
 
     _ = predict()
-    _.to_csv("submissions/submission_{}".format(dt.datetime.now()), index=False)
+    _.to_csv(
+        submissions_dir
+        / f"submission_{dt.datetime.now().strftime('%Y%m%d-%H%M%S')}.csv",
+        index=False,
+    )
