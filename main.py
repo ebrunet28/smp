@@ -4,7 +4,18 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 
 from preprocess import Loader, Preprocessor
-from preprocess import RGB, Float
+from preprocess import (
+    ProfileTextColor,
+    ProfilePageColor,
+    ProfileThemeColor,
+    UtcOffset,
+    NumOfFollowers,
+    NumOfPeopleFollowing,
+    NumOfStatusUpdates,
+    NumOfDirectMessages,
+    AvgDailyProfileVisitDuration,
+    AvgDailyProfileClicks,
+)
 
 
 def predict():
@@ -13,16 +24,16 @@ def predict():
     preprocessor = Preprocessor(loader)
     train_data, test_data = preprocessor.preprocess(
         [
-            RGB("Profile Text Color"),
-            RGB("Profile Page Color"),
-            RGB("Profile Theme Color"),
-            Float("UTC Offset"),
-            Float("Num of Followers"),
-            Float("Num of People Following"),
-            Float("Num of Status Updates"),
-            Float("Num of Direct Messages"),
-            Float("Avg Daily Profile Visit Duration in seconds"),
-            Float("Avg Daily Profile Clicks"),
+            ProfileTextColor(),
+            ProfilePageColor(),
+            ProfileThemeColor(),
+            UtcOffset(),
+            NumOfFollowers(),
+            NumOfPeopleFollowing(),
+            NumOfStatusUpdates(),
+            NumOfDirectMessages(),
+            AvgDailyProfileVisitDuration(),
+            AvgDailyProfileClicks(),
         ]
     )
 
@@ -42,9 +53,7 @@ def predict():
     X_test = test_data[selected]
     predictions = regressor.predict(X_test)
 
-    df = pd.DataFrame(
-        {"Id": X_test.index, "Predicted": predictions.round()}, dtype=int
-    )
+    df = pd.DataFrame({"Id": X_test.index, "Predicted": predictions.round()}, dtype=int)
 
     return df
 
