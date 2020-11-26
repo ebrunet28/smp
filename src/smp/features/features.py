@@ -1,10 +1,15 @@
 import pandas as pd
+from smp import data_dir
 
 
 class Loader:
     def __init__(self) -> None:
-        self.train: pd.DataFrame = pd.read_csv("data/train.csv", index_col="Id")
-        self.test: pd.DataFrame = pd.read_csv("data/test.csv", index_col="Id")
+        self.train: pd.DataFrame = pd.read_csv(
+            data_dir / "raw" / "train.csv", index_col="Id"
+        )
+        self.test: pd.DataFrame = pd.read_csv(
+            data_dir / "raw" / "test.csv", index_col="Id"
+        )
 
 
 class Feature:
@@ -34,30 +39,3 @@ class Preprocessor:
         test = pd.DataFrame.from_dict(self.test_records, orient="index")
 
         return train, test
-
-
-if __name__ == "__main__":
-
-    from smp.preprocess.rgb import RGB
-    from smp.preprocess.float import Float
-
-    loader = Loader()
-    preprocessor = Preprocessor(loader)
-    train_data, test_data = preprocessor.preprocess(
-        [
-            RGB("Profile Text Color"),
-            RGB("Profile Page Color"),
-            RGB("Profile Theme Color"),
-            Float("UTC Offset"),
-            Float("Num of Followers"),
-            Float("Num of People Following"),
-            Float("Num of Status Updates"),
-            Float("Num of Direct Messages"),
-            Float("Avg Daily Profile Visit Duration in seconds"),
-            Float("Avg Daily Profile Clicks"),
-            # Float("Num of Profile Likes"),
-        ]
-    )
-
-    print(train_data.head(10))
-    print(train_data.shape)

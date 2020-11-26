@@ -1,6 +1,6 @@
 import numpy as np
 
-from smp.preprocess.base import Feature
+from smp.features.features import Feature
 
 
 class OneHot(Feature):

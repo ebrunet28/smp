@@ -1,7 +1,40 @@
-# social media prediction
+# smp
+
+This readme was auto-generated using [whisk](https://github.com/whisk-ml/whisk). whisk creates a logical and flexible project structure for ML with reproducible results and lets you release your model to the world without becoming a software engineer.
+
+Once your project is setup, edit this readme directly to add context and documentation for your project.
+
+## Prerequisites
+
+The following is required to run this project:
+
+* Git (configured with a [user name and email](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup))
+* Python 3.6+
+* A Linux-based OS (includes OSX)
+
+## Setup
+
+After cloning this repo, perform the following steps to initialize the project:
+
+    cd smp
+    pip install whisk
+    whisk setup
+    source venv/bin/activate
+
+If DVC is used, download the latest data files: `dvc pull`.
+
+The steps above change to the project directory, install whisk, and setup the project environment.
+
+To learn more about whisk, here are a few helpful doc pages:
+* [A Quick Tour of whisk](https://docs.whisk-ml.org.io/en/latest/tour_of_whisk.html)
+* [Key Concepts](https://docs.whisk-ml.org.io/en/latest/key_concepts.html)
+* [Project Structure](https://docs.whisk-ml.org.io/en/latest/project_structure.html)
 
 
-## rules
+## Social media prediction competition
+
+
+### Rules
 - Teams of 3-4
 - Try to achieve an MSLE of at least 1.5
 - You are NOT allowed to use additional external data
@@ -14,18 +47,16 @@
 - Have fun!
 
 
-## download the data
+### Download the data
 if you are using Linux.
 1. pip install kaggle
 2. cd ~/.kaggle
 3. homepage www.kaggle.com -> Your Account -> Create New API token
 4. mv ~/Downloads/kaggle.json ./
 5. chmod 600 ./kaggle.json
-6. cd ~/Downloads
-7. kaggle competitions download -c ift6758-a20
-8. unzip under /data in the cloned repository
+6. run smp/src/smp/data/extract.py
 
-## data fields
+### Data fields
 - Id - Anonymous unique alphanumeric id for each user
 - User Name - The screen name of the user
 - Personal URL - The link to the personal webpage of the user, if provided
@@ -50,3 +81,7 @@ if you are using Linux.
 - Avg Daily Profile Clicks - The average number of mouse clicks that visitors of the user's profile make - whether it is for reading threads or pressing other buttons.
 - Profile Image - The filename of the PNG image corresponding to the user's profile image used in the simulation. These filenames point to the image file name in the train_profile_images.zip and test_profile_images.zip files.
 - Num of Profile Likes - The number of profile 'likes' received by the user from visitors/followers 
+
+--------
+
+<p><small>Project built with the <a target="_blank" href="https://github.com/whisk-ml/whisk">whisk ML project framework</a>.
