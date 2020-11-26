@@ -15,6 +15,16 @@ from smp.preprocess.rgb import (
     ProfilePageColor,
     ProfileThemeColor,
 )
+from smp.preprocess.onehot import (
+    PersonalURL,
+    ProfileCoverImageStatus,
+    ProfileVerificationStatus,
+    IsProfileViewSizeCustomized,
+    LocationPublicVisibility,
+    UserLanguage,
+    UserTimeZone,
+    ProfileCategory,
+)
 
 
 def predict():
@@ -30,6 +40,14 @@ def predict():
             NumOfPeopleFollowing(),
             NumOfStatusUpdates(),
             NumOfDirectMessages(),
+            PersonalURL(),
+            ProfileCoverImageStatus(),
+            ProfileVerificationStatus(),
+            IsProfileViewSizeCustomized(),
+            LocationPublicVisibility(),
+            UserLanguage(),
+            UserTimeZone(),
+            ProfileCategory(),
         ]
     )
 
