@@ -1,27 +1,63 @@
-from smp.features.features import Loader, Preprocessor
-from smp.features.rgb import RGB
-from smp.features.float import Float
+from smp.features.features import Loader, Dataset
+from smp.features.rgb import ProfilePageColor, ProfileTextColor, ProfileThemeColor
+from smp.features.discrete import (
+    UtcOffset,
+    NumOfDirectMessages,
+    NumOfFollowers,
+    NumOfPeopleFollowing,
+    NumOfStatusUpdates,
+)
+from smp.features.float import AvgDailyProfileClicks, AvgDailyProfileVisitDuration
+from smp.features.onehot import (
+    PersonalURL,
+    ProfileCoverImageStatus,
+    ProfileVerificationStatus,
+    IsProfileViewSizeCustomized,
+    LocationPublicVisibility,
+    UserLanguage,
+    UserTimeZone,
+    ProfileCategory,
+)
+
+from sklearn.pipeline import Pipeline
 
 
-if __name__ == "__main__":
-
+def main():
     loader = Loader()
-    preprocessor = Preprocessor(loader)
-    train_data, test_data = preprocessor.preprocess(
+    pipe = Pipeline(
         [
-            RGB("Profile Text Color"),
-            RGB("Profile Page Color"),
-            RGB("Profile Theme Color"),
-            Float("UTC Offset"),
-            Float("Num of Followers"),
-            Float("Num of People Following"),
-            Float("Num of Status Updates"),
-            Float("Num of Direct Messages"),
-            Float("Avg Daily Profile Visit Duration in seconds"),
-            Float("Avg Daily Profile Clicks"),
-            # Float("Num of Profile Likes"),
-        ]
+            Dataset(
+                [
+                    PersonalURL(),
+                    ProfileCoverImageStatus(),
+                    ProfileVerificationStatus(),
+                    IsProfileViewSizeCustomized(),
+                    ProfileTextColor(),
+                    ProfilePageColor(),
+                    ProfileThemeColor(),
+                    # UtcOffset,  # TODO:
+                    LocationPublicVisibility(),
+                    UserLanguage(),
+                    UserTimeZone(),
+                    NumOfFollowers(),
+                    NumOfPeopleFollowing(),
+                    NumOfStatusUpdates(),
+                    NumOfDirectMessages(),
+                    ProfileCategory(),
+                    AvgDailyProfileVisitDuration(),
+                    AvgDailyProfileClicks(),
+                ]
+            ).to_step()
+        ],
+        verbose=True,
     )
+
+    train_data = pipe.fit_transform(loader.train)
+    test_data = pipe.transform(loader.test)
 
     print(train_data.head(10))
     print(train_data.shape)
+
+if __name__ == "__main__":
+    main()
+

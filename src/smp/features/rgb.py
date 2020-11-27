@@ -1,11 +1,26 @@
-from smp.features.features import Feature
+from smp.features.features import Feature, Base
+from sklearn.impute import SimpleImputer
+import pandas as pd
+from sklearn.pipeline import Pipeline
 import numpy as np
 
 
-class RGB(Feature):
-
+class HexToRgb(Base):
     def __init__(self, var_name):
-        super().__init__(var_name)
+        self.var_name = var_name
+
+    def transform(self, X: pd.Series):
+        rgb = (self.hex_to_rgb(str(x)) for x in X)
+        r, g, b = tuple(zip(*rgb))
+        return pd.DataFrame({
+            self.var_name + " r": r,
+            self.var_name + " g": g,
+            self.var_name + " b": b,
+        }, index=X.index)
+
+    @property
+    def description(self):
+        return "Convert hexidecimal to rgb"
 
     @staticmethod
     def hex_to_rgb(hex_col: str):
@@ -19,21 +34,17 @@ class RGB(Feature):
             int(hex_col[i: i + hlen // 3], 16) / 255 for i in range(0, hlen, hlen // 3)
         )
 
-    def convert(self, data, records):
-        rgb = np.empty((data.shape[0], 3))
-        for i, (obs_id, hex_code) in enumerate(data[self.col_name].iteritems()):
-            rgb[i, :] = self.hex_to_rgb(str(hex_code))
 
-        # records[obs_id].update(
-        #     {
-        #         self.var_name + "_r": r,
-        #         self.var_name + "_g": g,
-        #         self.var_name + "_b": b,
-        #     }
-        # )
-        # import pandas as pd
-        # data[self.col_name].apply(lambda x: len(str(x).lstrip("#|.|+"))).sort_values().describe()
-        # data[self.col_name].apply(lambda x: len(''.join(e for e in str(x) if e.isnumeric()))).sort_values().describe()
+class RGB(Feature):
+    def __init__(self, var_name):
+        super().__init__(var_name)
+        self._pipe = Pipeline(
+            [
+                HexToRgb(var_name).to_step(),
+                ("SimpleImputer", SimpleImputer(strategy="mean"),),
+            ],
+            verbose=True
+        )
 
 
 class ProfileTextColor(RGB):
@@ -52,13 +63,26 @@ class ProfileThemeColor(RGB):
 
 
 if __name__ == "__main__":
-    from smp.features.features import Loader, Preprocessor
+    from smp.features.features import Loader, Dataset
+
     loader = Loader()
-    preprocessor = Preprocessor(loader)
-    train_data, test_data = preprocessor.preprocess(
+    pipe = Pipeline(
         [
-            ProfileTextColor(),
-            ProfilePageColor(),
-            ProfileThemeColor(),
-        ]
+            Dataset(
+                [
+                    ProfileTextColor(),
+                    ProfilePageColor(),
+                    ProfileThemeColor(),
+                ]
+            ).to_step()
+        ],
+        verbose=True,
     )
+
+    train_data = pipe.fit_transform(loader.train)
+    test_data = pipe.transform(loader.test)
+
+    assert loader.train.shape[0] == train_data.shape[0]
+    assert loader.train.shape[0] == train_data.dropna().shape[0]
+    assert loader.test.shape[0] == test_data.shape[0]
+    assert loader.test.shape[0] == test_data.dropna().shape[0]

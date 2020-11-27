@@ -1,35 +1,28 @@
-from smp.features.features import Feature
+from smp.features.features import Feature, Base
+import pandas as pd
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+
+
+class FillNaWithMean(Base):
+    def fit(self, X, y=None):
+        self._mean = X.mean()
+
+    def transform(self, X: pd.Series):
+
+        return X.fillna(self._mean).values.reshape(-1, 1)
+
+    @property
+    def description(self):
+        return "Fill blanks with mean of feature"
 
 
 class Float(Feature):
-    def convert(self, data, records):
-        for obs_id, val in data[self.col_name].iteritems():
-            records[obs_id].update({self.var_name: float(val)})
-
-
-class UtcOffset(Float):
-    def __init__(self):
-        super().__init__("UTC Offset")
-
-
-class NumOfFollowers(Float):
-    def __init__(self):
-        super().__init__("Num of Followers")
-
-
-class NumOfPeopleFollowing(Float):
-    def __init__(self):
-        super().__init__("Num of People Following")
-
-
-class NumOfStatusUpdates(Float):
-    def __init__(self):
-        super().__init__("Num of Status Updates")
-
-
-class NumOfDirectMessages(Float):
-    def __init__(self):
-        super().__init__("Num of Direct Messages")
+    def __init__(self, var_name):
+        super().__init__(var_name)
+        self._pipe = Pipeline(
+            [FillNaWithMean().to_step(), ("Std Scaler", StandardScaler())], verbose=True
+        )
 
 
 class AvgDailyProfileVisitDuration(Float):
