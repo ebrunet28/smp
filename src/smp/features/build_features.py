@@ -11,17 +11,16 @@ from smp.features.float import AvgDailyProfileClicks, AvgDailyProfileVisitDurati
 from sklearn.pipeline import Pipeline
 
 
-if __name__ == "__main__":
-    NumOfFollowers().to_step()
+def main():
     loader = Loader()
     pipe = Pipeline(
         [
             Dataset(
                 [
-                    # ProfileTextColor,
-                    # ProfilePageColor,
-                    # ProfileThemeColor,
-                    # UtcOffset,
+                    # ProfileTextColor(),
+                    # ProfilePageColor(),
+                    # ProfileThemeColor(),
+                    # UtcOffset,  # TODO:
                     NumOfFollowers(),
                     NumOfPeopleFollowing(),
                     NumOfStatusUpdates(),
@@ -39,3 +38,7 @@ if __name__ == "__main__":
 
     print(train_data.head(10))
     print(train_data.shape)
+
+if __name__ == "__main__":
+    main()
+
