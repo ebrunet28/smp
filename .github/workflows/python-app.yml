@@ -33,4 +33,10 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
+        mkdir "${HOME}/.kaggle"
+
+        echo "{\"username\":\"${{ secrets.KAGGLE_USERNAME }}\",\"key\":\"${{ secrets.KAGGLE_KEY }}\"}"  >> "${HOME}/.kaggle/kaggle.json"
+        
+        chmod 600 /home/runner/.kaggle/kaggle.json
+
         pytest
