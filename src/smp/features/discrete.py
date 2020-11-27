@@ -16,7 +16,9 @@ class ToInt(Base):
 class Discrete(Feature):
     def __init__(self, var_name):
         super().__init__(var_name)
-        self._pipe = Pipeline([ToInt().to_step(), ("Std Scaler", StandardScaler())], verbose=True)
+        self._pipe = Pipeline(
+            [ToInt().to_step(), ("Std Scaler", StandardScaler())], verbose=True
+        )
 
 
 class UtcOffset(Discrete):

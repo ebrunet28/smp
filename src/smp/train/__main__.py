@@ -1,9 +1,10 @@
 import datetime as dt
+import pprint
 
 import pandas as pd
 from sklearn.svm import SVR
 from sklearn.neighbors import KNeighborsRegressor
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 
 from smp import submissions_dir
@@ -29,9 +30,10 @@ from smp.features.onehot import (
 )
 
 
-def linear_regressor():
+def grid_search(model, parameters):
 
     loader = Loader()
+
     pipe = Pipeline(
         [
             Dataset(
@@ -56,20 +58,22 @@ def linear_regressor():
                     AvgDailyProfileClicks(),
                 ]
             ).to_step(),
-            ("Linear Regressor", KNeighborsRegressor(n_neighbors=200),),
+            (
+                "Grid Search",
+                GridSearchCV(model(), param_grid=parameters, n_jobs=-1),
+            ),
         ],
         verbose=True,
     )
 
     X_train = loader.train.iloc[:, :-1]
     y_train = loader.train.iloc[:, -1]
-
-    scores = cross_val_score(pipe, X_train, y_train, cv=20)
-
-    print(f"\nCross-validation scores: {scores}")
-    print(f"Mean: {sum(scores)/len(scores)}")
-
     pipe.fit(X_train, y_train)
+    scores = pipe.steps[-1][-1].cv_results_
+    pp = pprint.PrettyPrinter(depth=6)
+    pp.pprint(f"Mean scores: {scores['mean_test_score']}")
+    pp.pprint(f"Best params{pipe.steps[-1][-1].best_params_}")
+
     predictions = pipe.predict(loader.test)
 
     df = pd.DataFrame(
@@ -80,8 +84,14 @@ def linear_regressor():
 
 
 if __name__ == "__main__":
+    parameters = {
+        "n_neighbors": range(4, 500, 25),
+        "weights": ("uniform", "distance"),
+        "leaf_size": range(5, 100, 10),
+        "p": range(1, 6),
+    }
 
-    _ = linear_regressor()
+    _ = grid_search(KNeighborsRegressor, parameters)
     _.to_csv(
         submissions_dir
         / f"submission_{dt.datetime.now().strftime('%Y%m%d-%H%M%S')}.csv",
