@@ -17,6 +17,16 @@ from smp.features.features import Dataset
 from smp.features.features import Loader
 from smp.features.float import AvgDailyProfileVisitDuration, AvgDailyProfileClicks
 from smp.features.rgb import ProfileThemeColor, ProfileTextColor, ProfilePageColor
+from smp.features.onehot import (
+    PersonalURL,
+    ProfileCoverImageStatus,
+    ProfileVerificationStatus,
+    IsProfileViewSizeCustomized,
+    LocationPublicVisibility,
+    UserLanguage,
+    UserTimeZone,
+    ProfileCategory,
+)
 
 
 def linear_regressor():
@@ -26,14 +36,22 @@ def linear_regressor():
         [
             Dataset(
                 [
+                    PersonalURL(),
+                    ProfileCoverImageStatus(),
+                    ProfileVerificationStatus(),
+                    IsProfileViewSizeCustomized(),
                     ProfileTextColor(),
                     ProfilePageColor(),
                     ProfileThemeColor(),
                     # UtcOffset,  # TODO:
+                    LocationPublicVisibility(),
+                    # UserLanguage(),  # TODO: sparse, long training
+                    # UserTimeZone(),  # TODO: sparse, long training
                     NumOfFollowers(),
                     NumOfPeopleFollowing(),
                     NumOfStatusUpdates(),
                     NumOfDirectMessages(),
+                    ProfileCategory(),
                     AvgDailyProfileVisitDuration(),
                     AvgDailyProfileClicks(),
                 ]
