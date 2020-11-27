@@ -14,7 +14,7 @@ class HexToRgb(Base):
             self.var_name + "_r": r,
             self.var_name + "_g": g,
             self.var_name + "_b": b,
-        })
+        }, index=X.index)
 
     @property
     def description(self):
