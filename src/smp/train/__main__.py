@@ -17,7 +17,7 @@ from smp.features.features import Dataset
 from sklearn.model_selection import train_test_split
 
 
-def predict():
+def linear_regressor():
 
     loader = Loader()
     pipe = Pipeline(
@@ -63,7 +63,7 @@ def predict():
 
 if __name__ == "__main__":
 
-    _ = predict()
+    _ = linear_regressor()
     _.to_csv(
         submissions_dir
         / f"submission_{dt.datetime.now().strftime('%Y%m%d-%H%M%S')}.csv",
