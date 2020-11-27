@@ -1,73 +1,69 @@
 import datetime as dt
 
 import pandas as pd
-from sklearn.linear_model import LinearRegression
+from sklearn.svm import SVR
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.model_selection import cross_val_score
+from sklearn.pipeline import Pipeline
+
 from smp import submissions_dir
-from smp.features.features import Loader, Preprocessor
 from smp.features.discrete import (
     NumOfFollowers,
     NumOfPeopleFollowing,
     NumOfStatusUpdates,
     NumOfDirectMessages,
 )
-from smp.features.rgb import (
-    ProfileTextColor,
-    ProfilePageColor,
-    ProfileThemeColor,
-)
-from smp.features.onehot import (
-    PersonalURL,
-    ProfileCoverImageStatus,
-    ProfileVerificationStatus,
-    IsProfileViewSizeCustomized,
-    LocationPublicVisibility,
-    UserLanguage,
-    UserTimeZone,
-    ProfileCategory,
-)
+from smp.features.features import Dataset
+from smp.features.features import Loader
+from smp.features.float import AvgDailyProfileVisitDuration, AvgDailyProfileClicks
+from smp.features.rgb import ProfileThemeColor, ProfileTextColor, ProfilePageColor
 
 
-def predict():
+def linear_regressor():
 
     loader = Loader()
-    preprocessor = Preprocessor(loader)
-    train_data, test_data = preprocessor.preprocess(
+    pipe = Pipeline(
         [
-            ProfileTextColor(),
-            ProfilePageColor(),
-            ProfileThemeColor(),
-            NumOfFollowers(),
-            NumOfPeopleFollowing(),
-            NumOfStatusUpdates(),
-            NumOfDirectMessages(),
-            PersonalURL(),
-            ProfileCoverImageStatus(),
-            ProfileVerificationStatus(),
-            IsProfileViewSizeCustomized(),
-            LocationPublicVisibility(),
-            UserLanguage(),
-            UserTimeZone(),
-            ProfileCategory(),
-        ]
+            Dataset(
+                [
+                    ProfileTextColor(),
+                    ProfilePageColor(),
+                    ProfileThemeColor(),
+                    # UtcOffset,  # TODO:
+                    NumOfFollowers(),
+                    NumOfPeopleFollowing(),
+                    NumOfStatusUpdates(),
+                    NumOfDirectMessages(),
+                    AvgDailyProfileVisitDuration(),
+                    AvgDailyProfileClicks(),
+                ]
+            ).to_step(),
+            ("Linear Regressor", KNeighborsRegressor(n_neighbors=200),),
+        ],
+        verbose=True,
     )
 
-    X = train_data
-    y = loader.train["Num of Profile Likes"]
+    X_train = loader.train.iloc[:, :-1]
+    y_train = loader.train.iloc[:, -1]
 
-    regressor = LinearRegression()
-    regressor.fit(X=X, y=y)
+    scores = cross_val_score(pipe, X_train, y_train, cv=20)
 
-    X_test = test_data
-    predictions = regressor.predict(X_test)
+    print(f"\nCross-validation scores: {scores}")
+    print(f"Mean: {sum(scores)/len(scores)}")
 
-    df = pd.DataFrame({"Id": X_test.index, "Predicted": predictions.round()}, dtype=int)
+    pipe.fit(X_train, y_train)
+    predictions = pipe.predict(loader.test)
+
+    df = pd.DataFrame(
+        {"Id": loader.test.index, "Predicted": predictions.round()}, dtype=int
+    )
 
     return df
 
 
 if __name__ == "__main__":
 
-    _ = predict()
+    _ = linear_regressor()
     _.to_csv(
         submissions_dir
         / f"submission_{dt.datetime.now().strftime('%Y%m%d-%H%M%S')}.csv",
