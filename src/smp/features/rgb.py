@@ -51,7 +51,6 @@ class ProfileThemeColor(RGB):
         super().__init__("Profile Theme Color")
 
 
-
 if __name__ == "__main__":
     from smp.features.features import Loader, Preprocessor
     loader = Loader()
