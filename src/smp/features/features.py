@@ -72,28 +72,3 @@ class Feature(Base):
     def fit_transform(self, X, y=None):
         self._pipe.fit(X, y)
         return self._pipe.transform(X)
-
-    # TODO: 2 remove
-    def __call__(self, loader, train_records, test_records):
-        self.convert(loader.train, train_records)
-        self.convert(loader.test, test_records)
-
-    # TODO: 2 remove
-    def convert(self, data, records):
-        raise NotImplemented
-
-
-class Preprocessor:
-    def __init__(self, loader):
-        self.loader = loader
-        self.train_records = {obs_id: {} for obs_id in loader.train.index}
-        self.test_records = {obs_id: {} for obs_id in loader.test.index}
-
-    def preprocess(self, stack):
-        for var in stack:
-            var(self.loader, self.train_records, self.test_records)
-
-        train = pd.DataFrame.from_dict(self.train_records, orient="index")
-        test = pd.DataFrame.from_dict(self.test_records, orient="index")
-
-        return train, test
