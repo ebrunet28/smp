@@ -1,120 +1,131 @@
 import numpy as np
-
+import pandas as pd
+from sklearn.impute import SimpleImputer, MissingIndicator
+from sklearn.preprocessing import OneHotEncoder
 from smp.features.features import Feature
 
 
 class OneHot(Feature):
+    def __call__(self, loader, train_records, test_records):
+        train, test = self._impute(
+            loader.train[self.col_name].values.reshape(-1, 1),
+            loader.test[self.col_name].values.reshape(-1, 1),
+        )
+        train, test = self._preprocess(train, test)
+        self.convert(
+            pd.DataFrame.sparse.from_spmatrix(train, index=loader.train.index),
+            train_records,
+        )
+        self.convert(
+            pd.DataFrame.sparse.from_spmatrix(test, index=loader.test.index),
+            test_records,
+        )
+
+    def _impute(
+        self, train, test,
+    ):
+
+        self._imputer = SimpleImputer(strategy="most_frequent")
+        self._imputer.fit(train)
+
+        train = self._imputer.transform(train)
+        test = self._imputer.transform(test)
+
+        return train, test
+
+    def _preprocess(
+        self, train, test,
+    ):
+
+        self._encoder = OneHotEncoder(handle_unknown="ignore")
+        self._encoder.fit(train)
+
+        train = self._encoder.transform(train)
+        test = self._encoder.transform(test)
+
+        return train, test
+
     def convert(self, data, records):
-        raise NotImplementedError
+        for obs_id, row in data.iterrows():
+            records[obs_id].update({self.var_name: row.to_dict()})
 
 
 class PersonalURL(OneHot):
     def __init__(self):
         super().__init__("Personal URL")
 
-    def convert(self, data, records):
-        for obs_id, value in data[self.col_name].iteritems():
-            if value is np.nan:
-                encoded = 0
-            else:
-                encoded = 1
-            records[obs_id].update({self.var_name: encoded})
+    def _impute(
+        self, train, test,
+    ):
+
+        self._imputer = MissingIndicator()
+        self._imputer.fit(train)
+
+        train = self._imputer.transform(train)
+        test = self._imputer.transform(test)
+
+        return train, test
 
 
 class ProfileCoverImageStatus(OneHot):
     def __init__(self):
         super().__init__("Profile Cover Image Status")
 
-    def convert(self, data, records):
-        for obs_id, value in data[self.col_name].iteritems():
-            if value == "Set":
-                encoded = 0
-            else:
-                encoded = 1
-            records[obs_id].update({self.var_name: encoded})
-
 
 class ProfileVerificationStatus(OneHot):
     def __init__(self):
         super().__init__("Profile Verification Status")
-
-    def convert(self, data, records):
-        for obs_id, value in data[self.col_name].iteritems():
-            if value == "Verified":
-                encoded = 0
-            else:
-                encoded = 1
-            records[obs_id].update({self.var_name: encoded})
 
 
 class IsProfileViewSizeCustomized(OneHot):
     def __init__(self):
         super().__init__("Is Profile View Size Customized?")
 
-    def convert(self, data, records):
-        for obs_id, value in data[self.col_name].iteritems():
-            if value:
-                encoded = 0
-            else:
-                encoded = 1
-            records[obs_id].update({self.var_name: encoded})
+    def _impute(
+        self, train, test,
+    ):
+
+        return train, test
 
 
 class LocationPublicVisibility(OneHot):
     def __init__(self):
         super().__init__("Location Public Visibility")
 
-    def convert(self, data, records):
-        for obs_id, value in data[self.col_name].iteritems():
-            if value.lower() == "enabled":
-                encoded = 0
-            else:
-                encoded = 1
-            records[obs_id].update({self.var_name: encoded})
+    def _impute(
+        self, train, test,
+    ):
+
+        train = np.char.lower(train.astype(str)).astype(object)
+        test = np.char.lower(test.astype(str)).astype(object)
+
+        self._imputer = SimpleImputer(missing_values="??", strategy="most_frequent",)
+        self._imputer.fit(train)
+
+        train = self._imputer.transform(train)
+        test = self._imputer.transform(test)
+
+        return train, test
 
 
 class UserLanguage(OneHot):
     def __init__(self):
         super().__init__("User Language")
 
-    def convert(self, data, records):
-        for obs_id, value in data[self.col_name].iteritems():
-            if value == "en":
-                encoded = 0
-            else:
-                encoded = 1
-            records[obs_id].update({self.var_name: encoded})
-
 
 class UserTimeZone(OneHot):
     def __init__(self):
         super().__init__("User Time Zone")
-
-    def convert(self, data, records):
-        for obs_id, value in data[self.col_name].iteritems():
-            if value == "Eastern Time (US & Canada)":
-                encoded = 0
-            else:
-                encoded = 1
-            records[obs_id].update({self.var_name: encoded})
 
 
 class ProfileCategory(OneHot):
     def __init__(self):
         super().__init__("Profile Category")
 
-    def convert(self, data, records):
-        for obs_id, value in data[self.col_name].iteritems():
-            if value == "unknown":
-                encoded = 0
-            else:
-                encoded = 1
-            records[obs_id].update({self.var_name: encoded})
-
 
 if __name__ == "__main__":
 
-    from smp.preprocess.base import Loader, Preprocessor
+    from smp.features.features import Loader, Preprocessor
 
     loader = Loader()
     preprocessor = Preprocessor(loader)
