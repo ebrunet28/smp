@@ -2,19 +2,20 @@ import datetime as dt
 
 import pandas as pd
 from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import cross_val_score
+from sklearn.pipeline import Pipeline
+
 from smp import submissions_dir
-from smp.features.features import Loader
 from smp.features.discrete import (
     NumOfFollowers,
     NumOfPeopleFollowing,
     NumOfStatusUpdates,
     NumOfDirectMessages,
 )
-from smp.features.rgb import ProfileThemeColor, ProfileTextColor, ProfilePageColor
-from smp.features.float import AvgDailyProfileVisitDuration, AvgDailyProfileClicks
-from sklearn.pipeline import Pipeline
 from smp.features.features import Dataset
-from sklearn.model_selection import train_test_split
+from smp.features.features import Loader
+from smp.features.float import AvgDailyProfileVisitDuration, AvgDailyProfileClicks
+from smp.features.rgb import ProfileThemeColor, ProfileTextColor, ProfilePageColor
 
 
 def linear_regressor():
@@ -36,7 +37,7 @@ def linear_regressor():
                     AvgDailyProfileClicks(),
                 ]
             ).to_step(),
-            ("Linear Regressor", LinearRegression()),
+            ("Linear Regressor", LinearRegression(),),
         ],
         verbose=True,
     )
@@ -44,14 +45,11 @@ def linear_regressor():
     X_train = loader.train.iloc[:, :-1]
     y_train = loader.train.iloc[:, -1]
 
-    X_train, X_valid, y_train, y_valid = train_test_split(
-        X_train, y_train, random_state=0
-    )
+    scores = cross_val_score(pipe, X_train, y_train, cv=5)
+
+    print(f"\nCross-validation scores: {scores}\n")
+
     pipe.fit(X_train, y_train)
-    valid_score = pipe.score(X_valid, y_valid)
-
-    print(valid_score)
-
     predictions = pipe.predict(loader.test)
 
     df = pd.DataFrame(
