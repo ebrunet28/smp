@@ -36,5 +36,7 @@ jobs:
         mkdir "${HOME}/.kaggle"
 
         echo "{"username":"${{ secrets.KAGGLE_USERNAME }}","key":"${{ secrets.KAGGLE_KEY }}"}"  >> "${HOME}/.kaggle/kaggle.json"
+        
+        chmod 600 /home/runner/.kaggle/kaggle.json
 
         pytest
