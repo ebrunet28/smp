@@ -38,7 +38,7 @@ def linear_regressor():
                     AvgDailyProfileClicks(),
                 ]
             ).to_step(),
-            ("Linear Regressor", KNeighborsRegressor(n_neighbors=200),),
+            ("Linear Regressor", SVR(),),
         ],
         verbose=True,
     )

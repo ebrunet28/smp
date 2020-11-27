@@ -61,7 +61,13 @@ class Dataset(Base):
         elif isinstance(pandas, pd.Series):
             return pd.DataFrame({col_name: pandas})
         elif isinstance(pandas, np.ndarray):
-            return pd.DataFrame({col_name: pandas.flatten()}, index=index)
+            if pandas.shape[-1] == 1:
+                return pd.DataFrame({col_name: pandas.flatten()}, index=index)
+            else:
+                return pd.DataFrame(
+                    {f"{col_name}_{i}": col for i, col in enumerate(pandas.T)},
+                    index=index,
+                )
         else:
             raise ValueError("unsupported Type")
 
