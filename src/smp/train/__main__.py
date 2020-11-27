@@ -30,13 +30,8 @@ from smp.features.onehot import (
 )
 
 
-def linear_regressor():
-    parameters = {
-        "n_neighbors": range(4, 500, 25),
-        "weights": ("uniform", "distance"),
-        "leaf_size": range(5, 100, 10),
-        "p": range(1, 6),
-    }
+def grid_search(model, parameters):
+
     loader = Loader()
 
     pipe = Pipeline(
@@ -65,7 +60,7 @@ def linear_regressor():
             ).to_step(),
             (
                 "Grid Search",
-                GridSearchCV(KNeighborsRegressor(), param_grid=parameters, n_jobs=-1),
+                GridSearchCV(model(), param_grid=parameters, n_jobs=-1),
             ),
         ],
         verbose=True,
@@ -89,8 +84,14 @@ def linear_regressor():
 
 
 if __name__ == "__main__":
+    parameters = {
+        "n_neighbors": range(4, 500, 25),
+        "weights": ("uniform", "distance"),
+        "leaf_size": range(5, 100, 10),
+        "p": range(1, 6),
+    }
 
-    _ = linear_regressor()
+    _ = grid_search(KNeighborsRegressor, parameters)
     _.to_csv(
         submissions_dir
         / f"submission_{dt.datetime.now().strftime('%Y%m%d-%H%M%S')}.csv",
