@@ -62,19 +62,3 @@ if __name__ == "__main__":
             ProfileThemeColor(),
         ]
     )
-
-    # a = np.array(
-    #  [[ 0.93230948,  np.nan    ,  0.47773439,  0.76998063],
-    #   [ 0.94460779,  0.87882456,  0.79615838,  0.56282885],
-    #   [ 0.94272934,  0.48615268,  0.06196785,  np.nan],
-    #   [ 0.64940216,  0.74414127,  np.nan    ,  np.nan]]
-    # )
-    #  #Obtain mean of columns as you need, nanmean is convenient.
-    #  col_mean = np.nanmean(a, axis=0)
-    #  print(col_mean)
-    #
-    #  #Find indices that you need to replace
-    #  inds = np.where(np.isnan(a))
-    #
-    #  #Place column means in the indices. Align the arrays using take
-    #  a[inds] = np.take(col_mean, inds[1])
