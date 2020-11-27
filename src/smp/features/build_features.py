@@ -1,4 +1,4 @@
-from smp.features.features import Loader, Dataset
+from smp.features.features import Loader, Preprocessor, Dataset
 from smp.features.rgb import ProfilePageColor, ProfileTextColor, ProfileThemeColor
 from smp.features.discrete import (
     UtcOffset,
@@ -28,6 +28,9 @@ def main():
         [
             Dataset(
                 [
+                    ProfileTextColor(),
+                    ProfilePageColor(),
+                    ProfileThemeColor(),
                     PersonalURL(),
                     ProfileCoverImageStatus(),
                     ProfileVerificationStatus(),
@@ -58,6 +61,6 @@ def main():
     print(train_data.head(10))
     print(train_data.shape)
 
-
 if __name__ == "__main__":
     main()
+
