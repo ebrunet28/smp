@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from smp import submissions_dir
 from smp.features.features import Loader, Preprocessor
-from smp.features.float import (
+from smp.features.discrete import (
     NumOfFollowers,
     NumOfPeopleFollowing,
     NumOfStatusUpdates,
