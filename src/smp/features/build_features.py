@@ -1,4 +1,4 @@
-from smp.features.features import Loader, Preprocessor, Dataset
+from smp.features.features import Loader, Dataset
 from smp.features.rgb import ProfilePageColor, ProfileTextColor, ProfileThemeColor
 from smp.features.discrete import (
     UtcOffset,
@@ -8,6 +8,17 @@ from smp.features.discrete import (
     NumOfStatusUpdates,
 )
 from smp.features.float import AvgDailyProfileClicks, AvgDailyProfileVisitDuration
+from smp.features.onehot import (
+    PersonalURL,
+    ProfileCoverImageStatus,
+    ProfileVerificationStatus,
+    IsProfileViewSizeCustomized,
+    LocationPublicVisibility,
+    UserLanguage,
+    UserTimeZone,
+    ProfileCategory,
+)
+
 from sklearn.pipeline import Pipeline
 
 
@@ -17,14 +28,22 @@ def main():
         [
             Dataset(
                 [
+                    PersonalURL(),
+                    ProfileCoverImageStatus(),
+                    ProfileVerificationStatus(),
+                    IsProfileViewSizeCustomized(),
                     ProfileTextColor(),
                     ProfilePageColor(),
                     ProfileThemeColor(),
                     # UtcOffset,  # TODO:
+                    LocationPublicVisibility(),
+                    UserLanguage(),
+                    UserTimeZone(),
                     NumOfFollowers(),
                     NumOfPeopleFollowing(),
                     NumOfStatusUpdates(),
                     NumOfDirectMessages(),
+                    ProfileCategory(),
                     AvgDailyProfileVisitDuration(),
                     AvgDailyProfileClicks(),
                 ]

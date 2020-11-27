@@ -2,6 +2,7 @@ import pandas as pd
 from smp import data_dir
 from abc import ABC, abstractmethod
 from sklearn.pipeline import Pipeline
+from scipy.sparse.csr import csr_matrix
 from typing import Union
 import numpy as np
 
@@ -68,6 +69,9 @@ class Dataset(Base):
                     {f"{col_name}_{i}": col for i, col in enumerate(pandas.T)},
                     index=index,
                 )
+        elif isinstance(pandas, csr_matrix):
+            df = pd.DataFrame.sparse.from_spmatrix(pandas, index=index)
+            return df.add_prefix("{}_".format(col_name))
         else:
             raise ValueError("unsupported Type")
 
