@@ -3,6 +3,7 @@ from smp import data_dir
 from abc import ABC, abstractmethod
 from sklearn.pipeline import Pipeline
 from typing import Union
+import numpy as np
 
 
 class Loader:
@@ -47,18 +48,22 @@ class Dataset(Base):
     def transform(self, X):
         return pd.concat(
             [
-                self.to_dataframe(f.transform(X[f.col_name]), f.col_name)
+                self.to_dataframe(f.transform(X[f.col_name]), f.col_name, X.index)
                 for f in self.features
             ],
             axis=1,
         )
 
     @staticmethod
-    def to_dataframe(pandas: Union[pd.DataFrame, pd.Series], col_name: str):
+    def to_dataframe(pandas: Union[pd.DataFrame, pd.Series], col_name: str, index):
         if isinstance(pandas, pd.DataFrame):
             return pandas
         elif isinstance(pandas, pd.Series):
             return pd.DataFrame({col_name: pandas})
+        elif isinstance(pandas, np.ndarray):
+            return pd.DataFrame({col_name: pandas.flatten()}, index=index)
+        else:
+            raise ValueError("unsupported Type")
 
     @property
     def description(self):

@@ -1,7 +1,8 @@
 import datetime as dt
 
 import pandas as pd
-from sklearn.linear_model import LinearRegression
+from sklearn.svm import SVR
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import Pipeline
 
@@ -37,7 +38,7 @@ def linear_regressor():
                     AvgDailyProfileClicks(),
                 ]
             ).to_step(),
-            ("Linear Regressor", LinearRegression(),),
+            ("Linear Regressor", KNeighborsRegressor(n_neighbors=200),),
         ],
         verbose=True,
     )
@@ -45,9 +46,10 @@ def linear_regressor():
     X_train = loader.train.iloc[:, :-1]
     y_train = loader.train.iloc[:, -1]
 
-    scores = cross_val_score(pipe, X_train, y_train, cv=5)
+    scores = cross_val_score(pipe, X_train, y_train, cv=20)
 
-    print(f"\nCross-validation scores: {scores}\n")
+    print(f"\nCross-validation scores: {scores}")
+    print(f"Mean: {sum(scores)/len(scores)}")
 
     pipe.fit(X_train, y_train)
     predictions = pipe.predict(loader.test)
