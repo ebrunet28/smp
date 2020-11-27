@@ -1,11 +1,12 @@
 from smp.features.features import Feature, Base
 from sklearn.pipeline import Pipeline
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 
 
 class ToInt(Base):
     def transform(self, X: pd.Series):
-        return X.astype(int)
+        return X.astype(int).values.reshape(-1, 1)
 
     @property
     def description(self):
@@ -15,7 +16,9 @@ class ToInt(Base):
 class Discrete(Feature):
     def __init__(self, var_name):
         super().__init__(var_name)
-        self._pipe = Pipeline([ToInt().to_step()], verbose=True)
+        self._pipe = Pipeline(
+            [ToInt().to_step(), ("Std Scaler", StandardScaler())], verbose=True
+        )
 
 
 class UtcOffset(Discrete):

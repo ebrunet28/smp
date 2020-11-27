@@ -1,6 +1,7 @@
 from smp.features.features import Feature, Base
 import pandas as pd
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 
 class FillNaWithMean(Base):
@@ -9,7 +10,7 @@ class FillNaWithMean(Base):
 
     def transform(self, X: pd.Series):
 
-        return X.fillna(self._mean)
+        return X.fillna(self._mean).values.reshape(-1, 1)
 
     @property
     def description(self):
@@ -20,7 +21,7 @@ class Float(Feature):
     def __init__(self, var_name):
         super().__init__(var_name)
         self._pipe = Pipeline(
-            [FillNaWithMean().to_step()], verbose=True
+            [FillNaWithMean().to_step(), ("Std Scaler", StandardScaler())], verbose=True
         )
 
 
