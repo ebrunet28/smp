@@ -2,6 +2,7 @@ import pandas as pd
 from smp import data_dir
 from abc import ABC, abstractmethod
 from sklearn.pipeline import Pipeline
+from typing import Union
 
 
 class Loader:
@@ -44,9 +45,20 @@ class Dataset(Base):
             feature.fit(X[feature.col_name])
 
     def transform(self, X):
-        return pd.DataFrame(
-            {f.col_name: f.transform(X[f.col_name]) for f in self.features}
+        return pd.concat(
+            [
+                self.to_dataframe(f.transform(X[f.col_name]), f.col_name)
+                for f in self.features
+            ],
+            axis=1,
         )
+
+    @staticmethod
+    def to_dataframe(pandas: Union[pd.DataFrame, pd.Series], col_name: str):
+        if isinstance(pandas, pd.DataFrame):
+            return pandas
+        elif isinstance(pandas, pd.Series):
+            return pd.DataFrame({col_name: pandas})
 
     @property
     def description(self):

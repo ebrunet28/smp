@@ -17,9 +17,9 @@ def main():
         [
             Dataset(
                 [
-                    # ProfileTextColor(),
-                    # ProfilePageColor(),
-                    # ProfileThemeColor(),
+                    ProfileTextColor(),
+                    ProfilePageColor(),
+                    ProfileThemeColor(),
                     # UtcOffset,  # TODO:
                     NumOfFollowers(),
                     NumOfPeopleFollowing(),
