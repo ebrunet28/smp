@@ -18,7 +18,8 @@ from smp.features.onehot import (
     UserTimeZone,
     ProfileCategory,
 )
-
+from smp.features.elapsed_time import ProfileCreationTimestamp
+from smp.features.image import ProfileImage
 from sklearn.pipeline import Pipeline
 
 
@@ -38,6 +39,7 @@ def main():
                     # UtcOffset,  # TODO:
                     LocationPublicVisibility(),
                     UserLanguage(),
+                    ProfileCreationTimestamp(),
                     UserTimeZone(),
                     NumOfFollowers(),
                     NumOfPeopleFollowing(),
@@ -46,6 +48,7 @@ def main():
                     ProfileCategory(),
                     AvgDailyProfileVisitDuration(),
                     AvgDailyProfileClicks(),
+                    ProfileImage(offset=10, n_components=10)
                 ]
             ).to_step()
         ],
@@ -57,6 +60,10 @@ def main():
 
     print(train_data.head(10))
     print(train_data.shape)
+
+    print(test_data.head(10))
+    print(test_data.shape)
+
 
 if __name__ == "__main__":
     main()
