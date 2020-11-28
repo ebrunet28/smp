@@ -58,10 +58,10 @@ def grid_search(model, parameters):
                     PersonalURL(),
                     ProfileCoverImageStatus(),
                     ProfileVerificationStatus(),
-                    IsProfileViewSizeCustomized(),
                     ProfileTextColor(),
                     ProfilePageColor(),
                     ProfileThemeColor(),
+                    IsProfileViewSizeCustomized(),
                     # UtcOffset,  # TODO:
                     LocationPublicVisibility(),
                     UserLanguage(),

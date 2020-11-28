@@ -2,16 +2,7 @@ import numpy as np
 from sklearn.impute import SimpleImputer, MissingIndicator
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, LabelBinarizer
-from smp.features.features import Feature, Base
-
-
-class ToVector(Base):  # TODO delete after using FeatureUnion instead of Dataset
-    def transform(self, X):
-        return X.values.reshape(-1, 1)
-
-    @property
-    def description(self):
-        return "Skipping Imputer, transforming to vector"
+from smp.features.features import Feature, Base, ToVector
 
 
 class LowerCase(Base):
@@ -20,7 +11,7 @@ class LowerCase(Base):
 
     @property
     def description(self):
-        return "Lower case"
+        return "LowerCase"
 
 
 class Categorical(Feature):
@@ -43,8 +34,11 @@ class ProfileCoverImageStatus(Categorical):
         self._pipe = Pipeline(
             [
                 ToVector().to_step(),
-                ("imputing", SimpleImputer(strategy="most_frequent"),),
-                ("encoding", OneHotEncoder(drop="first"),),  # TODO: make Binary after FeatureUnion
+                ("SimpleImputer", SimpleImputer(strategy="most_frequent"),),
+                (
+                    "OneHotEncoder",
+                    OneHotEncoder(drop="first"),
+                ),  # TODO: make Binary after FeatureUnion
             ],
             verbose=True,
         )
@@ -54,7 +48,7 @@ class ProfileVerificationStatus(Categorical):
     def __init__(self):
         super().__init__("Profile Verification Status")
         self._pipe = Pipeline(
-            [ToVector().to_step(), ("encoder", OneHotEncoder(drop="first"),),],
+            [ToVector().to_step(), ("OneHotEncoder", OneHotEncoder(drop="first"),),],
             verbose=True,
         )
 
@@ -73,10 +67,13 @@ class LocationPublicVisibility(Categorical):
                 ToVector().to_step(),
                 LowerCase().to_step(),
                 (
-                    "imputer",
+                    "SimpleImputer",
                     SimpleImputer(missing_values="??", strategy="most_frequent"),
                 ),
-                ("encoder", OneHotEncoder(drop="first"),),  # TODO: make Binary after FeatureUnion
+                (
+                    "OneHotEncoder",
+                    OneHotEncoder(drop="first"),
+                ),  # TODO: make Binary after FeatureUnion
             ],
             verbose=True,
         )
@@ -89,7 +86,7 @@ class UserLanguage(Categorical):
             [
                 ToVector().to_step(),
                 (
-                    "encoder",
+                    "OneHotEncoder",
                     OneHotEncoder(
                         categories=[  # IMPORTANT: do not drop when forcing categories
                             ["en", "es"]
@@ -108,9 +105,9 @@ class UserTimeZone(Categorical):
         self._pipe = Pipeline(
             [
                 ToVector().to_step(),
-                ("imputer", SimpleImputer(strategy="most_frequent"),),
+                ("SimpleImputer", SimpleImputer(strategy="most_frequent"),),
                 (
-                    "encoder",
+                    "OneHotEncoder",
                     OneHotEncoder(
                         categories=[  # IMPORTANT: do not drop when forcing categories
                             [
@@ -134,10 +131,10 @@ class ProfileCategory(Categorical):
             [
                 ToVector().to_step(),
                 (
-                    "imputer",
+                    "SimpleImputer",
                     SimpleImputer(missing_values=" ", strategy="most_frequent"),
                 ),
-                ("encoder", OneHotEncoder(drop="first"),),
+                ("OneHotEncoder", OneHotEncoder(drop="first"),),
             ],
             verbose=True,
         )
