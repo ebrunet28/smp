@@ -25,20 +25,16 @@ cloudpickle # For serializing constructs that Pickle can't.
 ipython
 jupyter
 matplotlib
-numpy~=1.18.5
-pandas~=1.0.5
+numpy
+pandas
 plotly
 requests
 seaborn
 scikit-learn~=0.23.1
-scipy~=1.5.0
+scipy
 simplejson
 sqlalchemy
 
 ### Add project-specific requirements below. ###
-kaggle~=1.5.9
-
-smp~=0.1.0
-click~=7.1.2
-pillow~=7.2.0
-setuptools~=49.2.0
+kaggle
+pillow
