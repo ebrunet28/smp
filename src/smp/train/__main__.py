@@ -18,7 +18,7 @@ from smp.features.features import Dataset
 from smp.features.features import Loader
 from smp.features.float import AvgDailyProfileVisitDuration, AvgDailyProfileClicks
 from smp.features.rgb import ProfileThemeColor, ProfileTextColor, ProfilePageColor
-from smp.features.onehot import (
+from smp.features.categorical import (
     PersonalURL,
     ProfileCoverImageStatus,
     ProfileVerificationStatus,
@@ -47,8 +47,8 @@ def grid_search(model, parameters):
                     ProfileThemeColor(),
                     # UtcOffset,  # TODO:
                     LocationPublicVisibility(),
-                    # UserLanguage(),  # TODO: sparse, long training
-                    # UserTimeZone(),  # TODO: sparse, long training
+                    UserLanguage(),
+                    UserTimeZone(),
                     NumOfFollowers(),
                     NumOfPeopleFollowing(),
                     NumOfStatusUpdates(),

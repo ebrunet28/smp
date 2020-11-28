@@ -8,7 +8,7 @@ from smp.features.discrete import (
     NumOfStatusUpdates,
 )
 from smp.features.float import AvgDailyProfileClicks, AvgDailyProfileVisitDuration
-from smp.features.onehot import (
+from smp.features.categorical import (
     PersonalURL,
     ProfileCoverImageStatus,
     ProfileVerificationStatus,
@@ -32,10 +32,10 @@ def main():
                     PersonalURL(),
                     ProfileCoverImageStatus(),
                     ProfileVerificationStatus(),
-                    IsProfileViewSizeCustomized(),
                     ProfileTextColor(),
                     ProfilePageColor(),
                     ProfileThemeColor(),
+                    IsProfileViewSizeCustomized(),
                     # UtcOffset,  # TODO:
                     LocationPublicVisibility(),
                     UserLanguage(),
