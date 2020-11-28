@@ -18,6 +18,7 @@ from smp.features.onehot import (
     UserTimeZone,
     ProfileCategory,
 )
+from smp.features.elapsed_time import ProfileCreationTimestamp
 
 from sklearn.pipeline import Pipeline
 
@@ -38,6 +39,7 @@ def main():
                     # UtcOffset,  # TODO:
                     LocationPublicVisibility(),
                     UserLanguage(),
+                    ProfileCreationTimestamp(),
                     UserTimeZone(),
                     NumOfFollowers(),
                     NumOfPeopleFollowing(),
