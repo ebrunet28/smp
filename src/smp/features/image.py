@@ -6,16 +6,16 @@ from PIL import Image
 from os import listdir
 from sklearn.decomposition import PCA
 from pathlib import Path
+from smp import data_dir
 
 
 class ImageToArray(Base):
     def __init__(self, var_name, offset=10, n_components=10):
         self.var_name = var_name
 
-        root = str(Path(__file__).parent.parent.parent.parent)
-        self.train_dir = root + r"\data\train_profile_images\profile_images_train"
+        self.train_dir = data_dir / "train_profile_images" / "profile_images_train"
         self.train_files = listdir(self.train_dir)
-        self.test_dir = root + r"\data\test_profile_images\profile_images_test"
+        self.test_dir = data_dir / "test_profile_images" / "profile_images_test"
         self.test_files = listdir(self.test_dir)
 
         self.offset = offset
@@ -40,9 +40,9 @@ class ImageToArray(Base):
 
     def im_to_array(self, im_id):
         if im_id in self.train_files:
-            file = self.train_dir + "\\" + im_id
+            file = self.train_dir / im_id
         else:
-            file = self.test_dir + "\\" + im_id
+            file = self.test_dir / im_id
 
         return np.array(
             Image.open(file)
@@ -63,7 +63,7 @@ class ImagePreprocess(Feature):
 
 
 class ProfileImage(ImagePreprocess):
-    def __init__(self, offset, n_components):
+    def __init__(self, offset=10, n_components=10):
         super().__init__("Profile Image", offset, n_components)
 
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
         [
             Dataset(
                 [
-                    ProfileImage(),
+                    ProfileImage(offset=10, n_components=10),
                 ]
             ).to_step()
         ],
