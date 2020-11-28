@@ -13,9 +13,9 @@ class ImageToArray(Base):
     def __init__(self, var_name, offset=10, n_components=10):
         self.var_name = var_name
 
-        self.train_dir = data_dir / "train_profile_images" / "profile_images_train"
+        self.train_dir = data_dir / "raw" / "train_profile_images" / "profile_images_train"
         self.train_files = listdir(self.train_dir)
-        self.test_dir = data_dir / "test_profile_images" / "profile_images_test"
+        self.test_dir = data_dir / "raw" / "test_profile_images" / "profile_images_test"
         self.test_files = listdir(self.test_dir)
 
         self.offset = offset
