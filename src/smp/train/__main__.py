@@ -32,6 +32,19 @@ from smp.features.onehot import (
 )
 from smp.features.elapsed_time import ProfileCreationTimestamp
 from smp.features.image import ProfileImage
+from smp.features.features import Base
+
+
+class ToDense(Base):
+    """
+    Some algorithms does not accept csr_matrix. We need to convert the dataset to dense
+    """
+    def transform(self, X):
+        return X.toarray()
+
+    @property
+    def description(self):
+        return "To Dense"
 
 
 def grid_search(model, parameters):
@@ -69,6 +82,7 @@ def grid_search(model, parameters):
                     ProfileImage(offset=10, n_components=10),
                 ]
             ).to_step(),
+            #ToDense().to_step(),
             (
                 "Grid Search",
                 GridSearchCV(
