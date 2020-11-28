@@ -35,7 +35,6 @@ from smp.features.image import ProfileImage
 
 
 def grid_search(model, parameters):
-
     class PredictMinZero(model):
         _model = model
 
@@ -84,7 +83,7 @@ def grid_search(model, parameters):
     )
 
     X_train = loader.train.iloc[:, :-1]
-    y_train = loader.train.iloc[:, -1]
+    y_train = np.log(loader.train.iloc[:, -1] + 1)
     pipe.fit(X_train, y_train)
     scores = pipe.steps[-1][-1].cv_results_
     pp = pprint.PrettyPrinter(depth=6)
@@ -95,7 +94,8 @@ def grid_search(model, parameters):
     predictions = pipe.predict(loader.test)
 
     df = pd.DataFrame(
-        {"Id": loader.test.index, "Predicted": predictions.round()}, dtype=int
+        {"Id": loader.test.index, "Predicted": (np.exp(predictions) - 1).round()},
+        dtype=int,
     )
 
     return df
