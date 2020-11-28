@@ -58,10 +58,10 @@ def main():
     train_data = pipe.fit_transform(loader.train)
     test_data = pipe.transform(loader.test)
 
-    print(train_data.head(10))
+    print(train_data[:10,:])
     print(train_data.shape)
 
-    print(test_data.head(10))
+    print(test_data[:10,:])
     print(test_data.shape)
 
 
