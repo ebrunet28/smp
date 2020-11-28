@@ -7,6 +7,7 @@ from sklearn.preprocessing import StandardScaler
 class FillNaWithMean(Base):
     def fit(self, X, y=None):
         self._mean = X.mean()
+        return self
 
     def transform(self, X: pd.Series):
 
