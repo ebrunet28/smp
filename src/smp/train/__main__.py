@@ -20,7 +20,7 @@ from smp.features.discrete import (
     NumOfStatusUpdates,
 )
 from smp.features.float import AvgDailyProfileClicks, AvgDailyProfileVisitDuration
-from smp.features.onehot import (
+from smp.features.categorical import (
     PersonalURL,
     ProfileCoverImageStatus,
     ProfileVerificationStatus,
