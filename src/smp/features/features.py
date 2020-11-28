@@ -33,7 +33,7 @@ class Base(BaseEstimator, TransformerMixin):
 
 
 class Dataset(FeatureUnion):
-    def __init__(self, transformer_list, *, n_jobs=None,
+    def __init__(self, transformer_list, *, n_jobs=-1,
                  transformer_weights=None, verbose=False):
         super().__init__([f.to_step() for f in transformer_list], n_jobs=n_jobs,
                  transformer_weights=transformer_weights, verbose=verbose)
