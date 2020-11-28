@@ -74,7 +74,7 @@ def grid_search(model, parameters):
                 GridSearchCV(
                     PredictMinZero(),
                     param_grid=parameters,
-                    n_jobs=None,
+                    n_jobs=-1,
                     scoring="neg_mean_squared_log_error",
                 ),
             ),
