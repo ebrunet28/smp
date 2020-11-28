@@ -94,7 +94,7 @@ def grid_search(model, parameters):
     predictions = pipe.predict(loader.test)
 
     df = pd.DataFrame(
-        {"Id": loader.test.index, "Predicted": (np.exp(predictions) - 1).round()},
+        {"Id": loader.test.index, "Predicted": (np.exp(predictions)).round().astype(int)},
         dtype=int,
     )
 
