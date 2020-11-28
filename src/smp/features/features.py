@@ -1,10 +1,7 @@
 import pandas as pd
 from smp import data_dir
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from sklearn.pipeline import Pipeline, FeatureUnion
-from scipy.sparse.csr import csr_matrix
-from typing import Union
-import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 
 
@@ -21,10 +18,6 @@ class Loader:
 class Base(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
-
-    # def fit_transform(self, X, y=None):
-    #     self.fit(X, y)
-    #     return self.transform(X)
 
     @abstractmethod
     def transform(self, X):
@@ -44,40 +37,6 @@ class Dataset(FeatureUnion):
                  transformer_weights=None, verbose=False):
         super().__init__([f.to_step() for f in transformer_list], n_jobs=n_jobs,
                  transformer_weights=transformer_weights, verbose=verbose)
-
-
-    # def fit(self, X, y=None):
-    #     for feature in self.features:
-    #         feature.fit(X[feature.col_name])
-
-    # def transform(self, X):
-    #     return pd.concat(
-    #         [
-    #             self.to_dataframe(f.transform(X[f.col_name]), f.col_name, X.index)
-    #             for f in self.features
-    #         ],
-    #         axis=1,
-    #     )
-    #
-    # @staticmethod
-    # def to_dataframe(pandas: Union[pd.DataFrame, pd.Series], col_name: str, index):
-    #     if isinstance(pandas, pd.DataFrame):
-    #         return pandas
-    #     elif isinstance(pandas, pd.Series):
-    #         return pd.DataFrame({col_name: pandas})
-    #     elif isinstance(pandas, np.ndarray):
-    #         if pandas.shape[-1] == 1:
-    #             return pd.DataFrame({col_name: pandas.flatten()}, index=index)
-    #         else:
-    #             return pd.DataFrame(
-    #                 {f"{col_name}_{i}": col for i, col in enumerate(pandas.T)},
-    #                 index=index,
-    #             )
-    #     elif isinstance(pandas, csr_matrix):
-    #         df = pd.DataFrame.sparse.from_spmatrix(pandas, index=index)
-    #         return df.add_prefix("{}_".format(col_name))
-    #     else:
-    #         raise ValueError("unsupported Type")
 
     @property
     def description(self):
@@ -99,10 +58,11 @@ class Feature(Base):
 
     def fit(self, X, y=None):
         self._pipe.fit(X[self.col_name], y)
+        return self
 
     def transform(self, X):
         return self._pipe.transform(X[self.col_name])
 
-    def fit_transform(self, X, y=None):
+    def fit_transform(self, X, y=None, **fit_params):
         self._pipe.fit(X[self.col_name], y)
         return self._pipe.transform(X[self.col_name])
