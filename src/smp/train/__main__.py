@@ -35,6 +35,11 @@ from smp.features.image import ProfileImage
 
 
 def grid_search(model, parameters):
+    class PredictMinZero(model):
+        _model = model
+
+        def predict(self, *args, **kwargs):
+            return np.maximum(self._model.predict(self, *args, **kwargs), 0)
 
     loader = Loader()
 
@@ -52,7 +57,7 @@ def grid_search(model, parameters):
                     # UtcOffset,  # TODO:
                     LocationPublicVisibility(),
                     UserLanguage(),
-                    ProfileCreationTimestamp(),  # TODO move
+                    ProfileCreationTimestamp(),
                     UserTimeZone(),
                     NumOfFollowers(),
                     NumOfPeopleFollowing(),
