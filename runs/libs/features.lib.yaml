@@ -1,0 +1,63 @@
+features:
+  PersonalUrl_default: &feat_PersonalUrl_default
+    cls: smp.features.PersonalURL
+    parameters: {}
+  ProfileCoverImageStatus_default: &feat_ProfileCoverImageStatus_default
+    cls: smp.features.ProfileCoverImageStatus
+    parameters: { }
+  ProfileVerificationStatus_default: &feat_ProfileVerificationStatus_default
+    cls: smp.features.ProfileVerificationStatus
+    parameters: {}
+  IsProfileViewSizeCustomized_default: &feat_IsProfileViewSizeCustomized_default
+    cls: smp.features.IsProfileViewSizeCustomized
+    parameters: { }
+  ProfileTextColor_default: &feat_ProfileTextColor_default
+    cls: smp.features.ProfileTextColor
+    parameters: {}
+  ProfilePageColor_default: &feat_ProfilePageColor_default
+    cls: smp.features.ProfilePageColor
+    parameters: { }
+  ProfileThemeColor_default: &feat_ProfileThemeColor_default
+    cls: smp.features.ProfileThemeColor
+    parameters: {}
+  UtcOffset_default: &feat_UtcOffset_default
+    cls: smp.features.UtcOffset
+    parameters: { }
+  LocationPublicVisibility_default: &feat_LocationPublicVisibility_default
+    cls: smp.features.LocationPublicVisibility
+    parameters: { }
+  UserLanguage_default: &feat_UserLanguage_default
+    cls: smp.features.UserLanguage
+    parameters: { }
+  ProfileCreationTimestamp_default: &feat_ProfileCreationTimestamp_default
+    cls: smp.features.ProfileCreationTimestamp
+    parameters: {}
+  UserTimeZone_default: &feat_UserTimeZone_default
+    cls: smp.features.UserTimeZone
+    parameters: { }
+  NumOfFollowers_default: &feat_NumOfFollowers_default
+    cls: smp.features.NumOfFollowers
+    parameters: {}
+  NumOfPeopleFollowing_default: &feat_NumOfPeopleFollowing_default
+    cls: smp.features.NumOfPeopleFollowing
+    parameters: { }
+  NumOfStatusUpdates_default: &feat_NumOfStatusUpdates_default
+    cls: smp.features.NumOfStatusUpdates
+    parameters: {}
+  NumOfDirectMessages_default: &feat_NumOfDirectMessages_default
+    cls: smp.features.NumOfDirectMessages
+    parameters: { }
+  ProfileCategory_default: &feat_ProfileCategory_default
+    cls: smp.features.ProfileCategory
+    parameters: {}
+  AvgDailyProfileVisitDuration_default: &feat_AvgDailyProfileVisitDuration_default
+    cls: smp.features.AvgDailyProfileVisitDuration
+    parameters: { }
+  AvgDailyProfileClicks_default: &feat_AvgDailyProfileClicks_default
+    cls: smp.features.AvgDailyProfileClicks
+    parameters: { }
+  ProfileImage_default: &feat_ProfileImage_default
+    cls: smp.features.ProfileImage
+    parameters:
+      offset: 10
+      n_components: 10

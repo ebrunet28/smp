@@ -1,0 +1,9 @@
+trials:
+  - pipeline: *pipe_default
+    parameters:
+      estimator:
+        cls: sklearn.linear_model.LinearRegression
+        parameters: { }
+      param_grid:
+       fit_intercept: [True, False]
+       normalize: [True, False]
