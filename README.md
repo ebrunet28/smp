@@ -34,16 +34,8 @@ To learn more about whisk, here are a few helpful doc pages:
 ## Social media prediction competition
 
 
-### Evaluation
-&nbsp; | Points
---- | --- 
-Kaggle Submission | 10 
-Code Submission | 5
-Group Presentation + Questions | 10
-Group Report + Individual Statement | 15
-&nbsp; | ---
-&nbsp; | 40
-
+### Git Repository
+https://github.com/ebrunet28/smp
 
 ### Rules
 - Teams of 3-4
