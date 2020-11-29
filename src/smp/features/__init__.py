@@ -1,3 +1,4 @@
+from .boolean import *
 from .categorical import *
 from .discrete import *
 from .elapsed_time import *
