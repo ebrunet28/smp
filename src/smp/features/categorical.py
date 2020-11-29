@@ -29,7 +29,7 @@ class ProfileCoverImageStatus(Categorical):
                 (
                     "OneHotEncoder",
                     OneHotEncoder(drop="first"),
-                ),  # TODO: make Binary after FeatureUnion
+                ),  # TODO/31: use LabelBinarizer
             ],
             verbose=True,
         )
@@ -58,7 +58,7 @@ class LocationPublicVisibility(Categorical):
                 (
                     "OneHotEncoder",
                     OneHotEncoder(drop="first"),
-                ),  # TODO: make Binary after FeatureUnion
+                ),  # TODO/31: use LabelBinarizer
             ],
             verbose=True,
         )
