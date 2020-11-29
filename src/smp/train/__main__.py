@@ -135,5 +135,7 @@ def cli(file_name):
 
 
 if __name__ == "__main__":
-    main("randomforest.yml")
+    # main("randomforest.yml")
+    main("linear_model.yml")
+
     # cli()

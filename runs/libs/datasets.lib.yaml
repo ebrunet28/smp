@@ -15,7 +15,7 @@ datasets:
         - *feat_ProfileCreationTimestamp_default
         - *feat_UserTimeZone_default
         - *feat_NumOfFollowers_default
-        - *feat_NumOfPeopleFollowing_default
+        #- *feat_NumOfPeopleFollowing_default
         - *feat_NumOfStatusUpdates_default
         - *feat_NumOfDirectMessages_default
         - *feat_ProfileCategory_default

@@ -88,6 +88,7 @@ class ToVector(Base): # TODO/32: remove
     def description(self):
         return "ToVector"
 
+
 class ToLog(Base):
     def transform(self, X):
         return np.log(1 + X)
@@ -95,4 +96,45 @@ class ToLog(Base):
     @property
     def description(self):
         return "Convert to log(1+x)"
+
+
+class CapStd(Base):
+    def transform(self, X):
+        if isinstance(X, pd.Series):
+            mu = X.mean()
+            std = X.std()
+            X = np.clip(X, mu - 3 * std, mu + 3 * std)
+        elif isinstance(X, pd.DataFrame):
+            for col in X.columns:
+                mu = X[col].mean()
+                std = X[col].std()
+                X[col] = np.clip(X[col], mu - 3 * std, mu + 3 * std)
+        else:
+            for i in range(0, X.shape[1]):
+                mu = X[:, i].mean()
+                std = X[:, i].std()
+                X[:, i] = np.clip(X[:, i], mu - 3 * std, mu + 3 * std)
+
+        return X
+
+
+class CapIQR(Base):
+    def transform(self, X):
+        if isinstance(X, pd.Series):
+            percentiles = X.quantile([0.01, 0.99]).values
+            X = np.clip(X, percentiles[0], percentiles[1])
+        elif isinstance(X, pd.DataFrame):
+            for col in X.columns:
+                percentiles = X[col].quantile([0.01, 0.99]).values
+                X[col] = np.clip(X[col], percentiles[0], percentiles[1])
+        else:
+            for i in range(0, X.shape[1]):
+                percentiles = np.quantile(X[:, i], [0.01, 0.99])
+                X[:, i] = np.clip(X[:, i], percentiles[0], percentiles[1])
+        return X
+
+    @property
+    def description(self):
+        return "Cap  values"
+
 
