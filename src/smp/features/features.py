@@ -67,7 +67,7 @@ class Feature(Base):
         return self._pipe.transform(X[self.var_name])
 
 
-class ToVector(Base):
+class ToVector(Base): # TODO/32: remove
     def transform(self, X: pd.Series):
         return X.values.reshape(-1, 1)
 
