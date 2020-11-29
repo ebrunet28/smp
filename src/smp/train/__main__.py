@@ -21,15 +21,18 @@ from smp.features.discrete import (
 )
 from smp.features.float import AvgDailyProfileClicks, AvgDailyProfileVisitDuration
 from smp.features.categorical import (
-    PersonalURL,
     ProfileCoverImageStatus,
     ProfileVerificationStatus,
-    IsProfileViewSizeCustomized,
     LocationPublicVisibility,
     UserLanguage,
     UserTimeZone,
     ProfileCategory,
 )
+from smp.features.boolean import (
+    PersonalURL,
+    IsProfileViewSizeCustomized,
+)
+
 from smp.features.elapsed_time import ProfileCreationTimestamp
 from smp.features.image import ProfileImage
 from smp.features.features import Base
