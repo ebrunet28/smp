@@ -20,26 +20,37 @@ from smp.features.discrete import (
     NumOfStatusUpdates,
 )
 from smp.features.float import AvgDailyProfileClicks, AvgDailyProfileVisitDuration
-from smp.features.onehot import (
-    PersonalURL,
+from smp.features.categorical import (
     ProfileCoverImageStatus,
     ProfileVerificationStatus,
-    IsProfileViewSizeCustomized,
     LocationPublicVisibility,
     UserLanguage,
     UserTimeZone,
     ProfileCategory,
 )
+from smp.features.boolean import (
+    PersonalURL,
+    IsProfileViewSizeCustomized,
+)
+
 from smp.features.elapsed_time import ProfileCreationTimestamp
 from smp.features.image import ProfileImage
+from smp.features.features import Base
+
+
+class ToDense(Base):
+    """
+    Some algorithms does not accept csr_matrix. We need to convert the dataset to dense
+    """
+    def transform(self, X):
+        return X.toarray()
+
+    @property
+    def description(self):
+        return "To Dense"
 
 
 def grid_search(model, parameters):
-    class PredictMinZero(model):
-        _model = model
-
-        def predict(self, *args, **kwargs):
-            return np.maximum(self._model.predict(self, *args, **kwargs), 0)
 
     loader = Loader()
 
@@ -50,10 +61,10 @@ def grid_search(model, parameters):
                     PersonalURL(),
                     ProfileCoverImageStatus(),
                     ProfileVerificationStatus(),
-                    IsProfileViewSizeCustomized(),
                     ProfileTextColor(),
                     ProfilePageColor(),
                     ProfileThemeColor(),
+                    IsProfileViewSizeCustomized(),
                     # UtcOffset,  # TODO:
                     LocationPublicVisibility(),
                     UserLanguage(),
@@ -69,13 +80,14 @@ def grid_search(model, parameters):
                     ProfileImage(offset=10, n_components=10),
                 ]
             ).to_step(),
+            #ToDense().to_step(),
             (
                 "Grid Search",
                 GridSearchCV(
-                    PredictMinZero(),
+                    model(),
                     param_grid=parameters,
                     n_jobs=-1,
-                    scoring="neg_mean_squared_log_error",
+                    scoring="neg_mean_squared_error",
                 ),
             ),
         ],
@@ -87,9 +99,9 @@ def grid_search(model, parameters):
     pipe.fit(X_train, y_train)
     scores = pipe.steps[-1][-1].cv_results_
     pp = pprint.PrettyPrinter(depth=6)
-    pp.pprint(f"Mean scores: {scores['mean_test_score']}")
+    pp.pprint(f"Mean scores: {(-scores['mean_test_score'])**(1/2)}")
     pp.pprint(f"Best params{pipe.steps[-1][-1].best_params_}")
-    pp.pprint(f"Best score: {max(scores['mean_test_score'])}")
+    pp.pprint(f"Best score: {min((-scores['mean_test_score'])**(1/2))}")
 
     predictions = pipe.predict(loader.test)
 
@@ -106,6 +118,12 @@ if __name__ == "__main__":
         "fit_intercept": (True, False),
         "normalize": (True, False),
     }
+    # parameters ={
+    #     "n_neighbors": [4, 5, 6, 8, 10, 15, 20, 30, 40, 50, 75, 100, 150, 200, 250, 300, 400],
+    #     "weights": ("uniform", "distance"),
+    #     "leaf_size": range(1, 10, 2),
+    #     "p": range(1, 3),
+    # }
 
     _ = grid_search(LinearRegression, parameters)
     _.to_csv(

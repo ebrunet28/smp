@@ -1,17 +1,8 @@
 import numpy as np
-from sklearn.impute import SimpleImputer, MissingIndicator
+from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
-from smp.features.features import Feature, Base
-
-
-class ToVector(Base):
-    def transform(self, X):
-        return X.values.reshape(-1, 1)
-
-    @property
-    def description(self):
-        return "Skipping Imputer, transforming to vector"
+from sklearn.preprocessing import OneHotEncoder, LabelBinarizer
+from smp.features.features import Feature, Base, ToVector
 
 
 class LowerCase(Base):
@@ -20,57 +11,40 @@ class LowerCase(Base):
 
     @property
     def description(self):
-        return "Lower case"
+        return "LowerCase"
 
 
-class OneHot(Feature):
+class Categorical(Feature):
     def __init__(self, var_name):
         super().__init__(var_name)
 
 
-class PersonalURL(OneHot):
-    def __init__(self):
-        super().__init__("Personal URL")
-        self._pipe = Pipeline(
-            [
-                ToVector().to_step(),
-                ("MissingIndicator", MissingIndicator()),
-                ("OneHotEncoder", OneHotEncoder()),
-            ],
-            verbose=True,
-        )
-
-
-class ProfileCoverImageStatus(OneHot):
+class ProfileCoverImageStatus(Categorical):
     def __init__(self):
         super().__init__("Profile Cover Image Status")
         self._pipe = Pipeline(
             [
                 ToVector().to_step(),
                 ("SimpleImputer", SimpleImputer(strategy="most_frequent"),),
-                ("OneHotEncoder", OneHotEncoder()),
+                (
+                    "OneHotEncoder",
+                    OneHotEncoder(drop="first"),
+                ),  # TODO: make Binary after FeatureUnion
             ],
             verbose=True,
         )
 
 
-class ProfileVerificationStatus(OneHot):
+class ProfileVerificationStatus(Categorical):
     def __init__(self):
         super().__init__("Profile Verification Status")
         self._pipe = Pipeline(
-            [ToVector().to_step(), ("OneHotEncoder", OneHotEncoder()),], verbose=True,
+            [ToVector().to_step(), ("OneHotEncoder", OneHotEncoder(drop="first"),),],
+            verbose=True,
         )
 
 
-class IsProfileViewSizeCustomized(OneHot):
-    def __init__(self):
-        super().__init__("Is Profile View Size Customized?")
-        self._pipe = Pipeline(
-            [ToVector().to_step(), ("OneHotEncoder", OneHotEncoder()),], verbose=True,
-        )
-
-
-class LocationPublicVisibility(OneHot):
+class LocationPublicVisibility(Categorical):
     def __init__(self):
         super().__init__("Location Public Visibility")
         self._pipe = Pipeline(
@@ -81,38 +55,61 @@ class LocationPublicVisibility(OneHot):
                     "SimpleImputer",
                     SimpleImputer(missing_values="??", strategy="most_frequent"),
                 ),
-                ("OneHotEncoder", OneHotEncoder(handle_unknown="ignore")),
+                (
+                    "OneHotEncoder",
+                    OneHotEncoder(drop="first"),
+                ),  # TODO: make Binary after FeatureUnion
             ],
             verbose=True,
         )
 
 
-class UserLanguage(OneHot):
+class UserLanguage(Categorical):
     def __init__(self):
         super().__init__("User Language")
         self._pipe = Pipeline(
             [
                 ToVector().to_step(),
-                ("OneHotEncoder", OneHotEncoder(handle_unknown="ignore")),
+                (
+                    "OneHotEncoder",
+                    OneHotEncoder(
+                        categories=[  # IMPORTANT: do not drop when forcing categories
+                            ["en", "es"]
+                        ],
+                        handle_unknown="ignore",
+                    ),
+                ),
             ],
             verbose=True,
         )
 
 
-class UserTimeZone(OneHot):
+class UserTimeZone(Categorical):
     def __init__(self):
         super().__init__("User Time Zone")
         self._pipe = Pipeline(
             [
                 ToVector().to_step(),
                 ("SimpleImputer", SimpleImputer(strategy="most_frequent"),),
-                ("OneHotEncoder", OneHotEncoder(handle_unknown="ignore")),
+                (
+                    "OneHotEncoder",
+                    OneHotEncoder(
+                        categories=[  # IMPORTANT: do not drop when forcing categories
+                            [
+                                "Eastern Time (US & Canada)",
+                                "Pacific Time (US & Canada)",
+                                "Central Time (US & Canada)",
+                            ]
+                        ],
+                        handle_unknown="ignore",
+                    ),
+                ),
             ],
             verbose=True,
         )
 
 
-class ProfileCategory(OneHot):
+class ProfileCategory(Categorical):
     def __init__(self):
         super().__init__("Profile Category")
         self._pipe = Pipeline(
@@ -122,7 +119,7 @@ class ProfileCategory(OneHot):
                     "SimpleImputer",
                     SimpleImputer(missing_values=" ", strategy="most_frequent"),
                 ),
-                ("OneHotEncoder", OneHotEncoder()),
+                ("OneHotEncoder", OneHotEncoder(drop="first"),),
             ],
             verbose=True,
         )

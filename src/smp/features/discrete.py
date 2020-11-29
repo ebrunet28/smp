@@ -1,12 +1,11 @@
-from smp.features.features import Feature, Base
+from smp.features.features import Feature, Base, ToVector
 from sklearn.pipeline import Pipeline
-import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
 
 class ToInt(Base):
-    def transform(self, X: pd.Series):
-        return X.astype(int).values.reshape(-1, 1)
+    def transform(self, X):
+        return X.astype(int)
 
     @property
     def description(self):
@@ -17,7 +16,7 @@ class Discrete(Feature):
     def __init__(self, var_name):
         super().__init__(var_name)
         self._pipe = Pipeline(
-            [ToInt().to_step(), ("Std Scaler", StandardScaler())], verbose=True
+            [ToVector().to_step(), ToInt().to_step(), ("Std Scaler", StandardScaler())], verbose=True
         )
 
 

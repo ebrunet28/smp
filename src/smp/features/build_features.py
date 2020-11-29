@@ -8,15 +8,17 @@ from smp.features.discrete import (
     NumOfStatusUpdates,
 )
 from smp.features.float import AvgDailyProfileClicks, AvgDailyProfileVisitDuration
-from smp.features.onehot import (
-    PersonalURL,
+from smp.features.categorical import (
     ProfileCoverImageStatus,
     ProfileVerificationStatus,
-    IsProfileViewSizeCustomized,
     LocationPublicVisibility,
     UserLanguage,
     UserTimeZone,
     ProfileCategory,
+)
+from smp.features.boolean import (
+    PersonalURL,
+    IsProfileViewSizeCustomized,
 )
 from smp.features.elapsed_time import ProfileCreationTimestamp
 from smp.features.image import ProfileImage
@@ -32,10 +34,10 @@ def main():
                     PersonalURL(),
                     ProfileCoverImageStatus(),
                     ProfileVerificationStatus(),
-                    IsProfileViewSizeCustomized(),
                     ProfileTextColor(),
                     ProfilePageColor(),
                     ProfileThemeColor(),
+                    IsProfileViewSizeCustomized(),
                     # UtcOffset,  # TODO:
                     LocationPublicVisibility(),
                     UserLanguage(),
@@ -58,10 +60,10 @@ def main():
     train_data = pipe.fit_transform(loader.train)
     test_data = pipe.transform(loader.test)
 
-    print(train_data.head(10))
+    print(train_data[:10,:])
     print(train_data.shape)
 
-    print(test_data.head(10))
+    print(test_data[:10,:])
     print(test_data.shape)
 
 
