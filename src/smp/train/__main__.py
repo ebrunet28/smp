@@ -129,11 +129,10 @@ def main(file_name):
 
 
 @click.command()
-@click.argument('file_name', type=click.Path())
+@click.argument("file_name", type=click.Path())
 def cli(file_name):
     main(file_name)
 
 
 if __name__ == "__main__":
     cli()
-

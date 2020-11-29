@@ -36,7 +36,7 @@ class Dataset(FeatureUnion):
     def __init__(self, transformer_list, *, n_jobs=-1,
                  transformer_weights=None, verbose=False):
         super().__init__([f.to_step() for f in transformer_list], n_jobs=n_jobs,
-                 transformer_weights=transformer_weights, verbose=verbose)
+                         transformer_weights=transformer_weights, verbose=verbose)
 
     @property
     def description(self):
@@ -60,21 +60,29 @@ class ToDense(Base):
 
 class Feature(Base):
     def __init__(self, var_name):
-        self.col_name = var_name
-        self.var_name = var_name.lower().replace(" ", "_")
+        self.var_name = var_name
         self._pipe: Pipeline = None
 
     @property
     def description(self):
-        return self.col_name
+        return self.var_name
 
     def fit(self, X, y=None):
-        self._pipe.fit(X[self.col_name], y)
+        self._pipe.fit(X[self.var_name], y)
         return self
 
     def transform(self, X):
-        return self._pipe.transform(X[self.col_name])
+        return self._pipe.transform(X[self.var_name])
 
     def fit_transform(self, X, y=None, **fit_params):
-        self._pipe.fit(X[self.col_name], y)
-        return self._pipe.transform(X[self.col_name])
+        self._pipe.fit(X[self.var_name], y)
+        return self._pipe.transform(X[self.var_name])
+
+
+class ToVector(Base):
+    def transform(self, X: pd.Series):
+        return X.values.reshape(-1, 1)
+
+    @property
+    def description(self):
+        return "ToVector"
