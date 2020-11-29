@@ -38,3 +38,4 @@ sqlalchemy
 ### Add project-specific requirements below. ###
 kaggle
 pillow
+ruamel.yaml

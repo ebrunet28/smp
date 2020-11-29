@@ -45,6 +45,18 @@ class Dataset(FeatureUnion):
     def to_step(self):
         return self.description, self
 
+class ToDense(Base):
+    """
+    Some algorithms does not accept csr_matrix. We need to convert the dataset to dense
+    """
+
+    def transform(self, X):
+        return X.toarray()
+
+    @property
+    def description(self):
+        return "To Dense"
+
 
 class Feature(Base):
     def __init__(self, var_name):

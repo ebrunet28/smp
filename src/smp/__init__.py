@@ -16,3 +16,7 @@ artifacts_dir = whisk.project.artifacts_dir
 whisk.project.submissions_dir = whisk.project.path / "submissions"
 submissions_dir = whisk.project.submissions_dir
 """Location of the submissions directory as a pathlib.Path."""
+
+whisk.project.runs_dir = whisk.project.path / "runs"
+runs_dir = whisk.project.runs_dir
+"""Location of the runs directory as a pathlib.Path."""

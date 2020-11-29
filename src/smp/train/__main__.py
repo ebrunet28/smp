@@ -1,98 +1,91 @@
-import datetime as dt
+import click
+import os
 import pprint
+from importlib import import_module
+from itertools import permutations
 
-import pandas as pd
 import numpy as np
-from sklearn.svm import SVR
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import GridSearchCV
+import pandas as pd
+from ruamel import yaml
+from ruamel.yaml import YAML
+from ruamel.yaml.composer import ComposerError
 from sklearn.pipeline import Pipeline
 
+from smp import runs_dir
 from smp import submissions_dir
-from smp.features.features import Loader, Dataset
-from smp.features.rgb import ProfilePageColor, ProfileTextColor, ProfileThemeColor
-from smp.features.discrete import (
-    UtcOffset,
-    NumOfDirectMessages,
-    NumOfFollowers,
-    NumOfPeopleFollowing,
-    NumOfStatusUpdates,
-)
-from smp.features.float import AvgDailyProfileClicks, AvgDailyProfileVisitDuration
-from smp.features.categorical import (
-    ProfileCoverImageStatus,
-    ProfileVerificationStatus,
-    LocationPublicVisibility,
-    UserLanguage,
-    UserTimeZone,
-    ProfileCategory,
-)
-from smp.features.boolean import (
-    PersonalURL,
-    IsProfileViewSizeCustomized,
-)
-
-from smp.features.elapsed_time import ProfileCreationTimestamp
-from smp.features.image import ProfileImage
-from smp.features.features import Base
+from smp.features.features import Loader
 
 
-class ToDense(Base):
-    """
-    Some algorithms does not accept csr_matrix. We need to convert the dataset to dense
-    """
-    def transform(self, X):
-        return X.toarray()
+def get_trials(file_name):
 
-    @property
-    def description(self):
-        return "To Dense"
+    default_data = []
+    for file in os.listdir(runs_dir / "libs"):
+        with open(runs_dir / "libs" / file) as fp:
+            default_data.append(fp.read())
+
+    with open(runs_dir / file_name) as fp:
+        user_data = fp.read()
+
+    for perm in permutations(default_data):
+        try:
+            merged_data = yaml.load(
+                "\n".join(list(perm) + [user_data]), Loader=yaml.RoundTripLoader
+            )
+            break
+        except ComposerError as E:
+            continue
+    else:
+        raise ComposerError("Was not able to resolve libraries")
+
+    resolved_yaml = yaml.dump(merged_data, Dumper=yaml.RoundTripDumper)
+
+    my = YAML(typ="safe")
+    return my.load(resolved_yaml)["trials"]
 
 
-def grid_search(model, parameters):
+def resolve_array(array, parameters):
+    return [resolve_cls(item, parameters) for item in array]
 
-    loader = Loader()
 
-    pipe = Pipeline(
+def resolve_cls(step, parameters):
+    if isinstance(step, (list, tuple)):
+        return resolve_array(step, parameters)
+
+    if isinstance(step, dict):
+
+        if "cls" in step:
+
+            *module, cls = step["cls"].split(".")
+            cls = getattr(import_module(".".join(module)), cls)
+            if "parameters" in step:
+                step_params = {
+                    name: resolve_cls(p, parameters)
+                    for name, p in step["parameters"].items()
+                }
+                return cls(**step_params)
+            else:
+                return cls
+        elif "$ref" in step:
+            return resolve_cls(parameters[step["$ref"]], {})
+
+    return step
+
+
+def resolve_pipe(trial):
+    return Pipeline(
         [
-            Dataset(
-                [
-                    PersonalURL(),
-                    ProfileCoverImageStatus(),
-                    ProfileVerificationStatus(),
-                    ProfileTextColor(),
-                    ProfilePageColor(),
-                    ProfileThemeColor(),
-                    IsProfileViewSizeCustomized(),
-                    # UtcOffset,  # TODO:
-                    LocationPublicVisibility(),
-                    UserLanguage(),
-                    ProfileCreationTimestamp(),
-                    UserTimeZone(),
-                    NumOfFollowers(),
-                    NumOfPeopleFollowing(),
-                    NumOfStatusUpdates(),
-                    NumOfDirectMessages(),
-                    ProfileCategory(),
-                    AvgDailyProfileVisitDuration(),
-                    AvgDailyProfileClicks(),
-                    ProfileImage(offset=10, n_components=10),
-                ]
-            ).to_step(),
-            #ToDense().to_step(),
-            (
-                "Grid Search",
-                GridSearchCV(
-                    model(),
-                    param_grid=parameters,
-                    n_jobs=-1,
-                    scoring="neg_mean_squared_error",
-                ),
-            ),
+            (step["name"], resolve_cls(step, trial["parameters"]))
+            if "name" in step
+            else resolve_cls(step, trial["parameters"]).to_step()
+            for step in trial["pipeline"]
         ],
         verbose=True,
     )
+
+
+def run(loader, trial):
+
+    pipe = resolve_pipe(trial)
 
     X_train = loader.train.iloc[:, :-1]
     y_train = np.log(loader.train.iloc[:, -1] + 1)
@@ -106,28 +99,40 @@ def grid_search(model, parameters):
     predictions = pipe.predict(loader.test)
 
     df = pd.DataFrame(
-        {"Id": loader.test.index, "Predicted": (np.exp(predictions)).round().astype(int)},
+        {
+            "Id": loader.test.index,
+            "Predicted": (np.exp(predictions)).round().astype(int),
+        },
         dtype=int,
     )
 
     return df
 
 
-if __name__ == "__main__":
-    parameters = {
-        "fit_intercept": (True, False),
-        "normalize": (True, False),
-    }
-    # parameters ={
-    #     "n_neighbors": [4, 5, 6, 8, 10, 15, 20, 30, 40, 50, 75, 100, 150, 200, 250, 300, 400],
-    #     "weights": ("uniform", "distance"),
-    #     "leaf_size": range(1, 10, 2),
-    #     "p": range(1, 3),
-    # }
+def main(file_name):
 
-    _ = grid_search(LinearRegression, parameters)
-    _.to_csv(
-        submissions_dir
-        / f"submission_{dt.datetime.now().strftime('%Y%m%d-%H%M%S')}.csv",
-        index=False,
-    )
+    trials = get_trials(file_name)
+    loader = Loader()
+    for i, trial in enumerate(trials):
+        result_dir = submissions_dir / os.path.splitext(file_name)[0] / str(i)
+        os.makedirs(result_dir, exist_ok=True)
+
+        trial_yaml = YAML(typ="safe")
+        with open("trials.yml", "w") as f:
+            trial_yaml.dump({"trials": [trial]}, f)
+
+        df = run(loader, trial)
+
+        df.to_csv(
+            result_dir / f"submission.csv", index=False,
+        )
+
+
+@click.command()
+@click.argument("file_name", type=click.Path())
+def cli(file_name):
+    main(file_name)
+
+
+if __name__ == "__main__":
+    cli()
