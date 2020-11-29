@@ -1,0 +1,29 @@
+trials:
+  - pipeline: *pipe_default
+    parameters:
+      estimator:
+        cls: sklearn.linear_model.LinearRegression
+        parameters: { }
+      param_grid:
+        fit_intercept: [ True, False ]
+        normalize: [ True, False ]
+
+  - pipeline: *pipe_default
+    parameters:
+      estimator:
+        cls: sklearn.linear_model.Ridge
+        parameters: {}
+      param_grid:
+        alpha: [1.0, 10.0, 100.0, 1000.0, 10000.0]
+        fit_intercept: [True, False]
+        normalize: [True, False]
+
+  - pipeline: *pipe_default
+    parameters:
+      estimator:
+        cls: sklearn.linear_model.Lasso
+        parameters: { }
+      param_grid:
+        alpha: [ 0.001, 0.01, 0.1 ]
+        fit_intercept: [ True, False ]
+        normalize: [ True, False ]

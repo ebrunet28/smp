@@ -135,4 +135,5 @@ def cli(file_name):
 
 
 if __name__ == "__main__":
-    cli()
+    main("randomforest.yml")
+    # cli()

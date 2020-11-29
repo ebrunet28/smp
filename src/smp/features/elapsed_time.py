@@ -2,7 +2,6 @@ from smp.features.features import Feature, Base
 from sklearn.impute import SimpleImputer
 import pandas as pd
 from sklearn.pipeline import Pipeline
-import numpy as np
 
 
 class TimeDelta(Base):

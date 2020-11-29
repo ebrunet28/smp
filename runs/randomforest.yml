@@ -1,0 +1,11 @@
+trials:
+  - pipeline: *pipe_default
+    parameters:
+      estimator:
+        cls: sklearn.ensemble.RandomForestRegressor
+        parameters: { }
+      param_grid:
+        n_estimators: [ 32, 64, 128, 256 ]
+        max_depth: [10, 20, 30]
+        max_features: [10, 20]
+        njobs: [-1]
