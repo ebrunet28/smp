@@ -125,7 +125,7 @@ def main(file_name):
         os.makedirs(result_dir, exist_ok=True)
 
         trial_yaml = YAML(typ="safe")
-        with open("trials.yml", "w") as f:
+        with open(result_dir / "trials.yml", "w") as f:
             trial_yaml.dump({"trials": [trial]}, f)
 
         df, score = run(loader, trial)
