@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.base import TransformerMixin
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, LabelBinarizer
@@ -14,6 +15,20 @@ class LowerCase(Base):
         return "LowerCase"
 
 
+class MyLabelBinarizer(
+    TransformerMixin
+):  # https://stackoverflow.com/questions/46162855/fit-transform-takes-2-positional-arguments-but-3-were-given-with-labelbinarize
+    def __init__(self, *args, **kwargs):
+        self._encoder = LabelBinarizer(*args, **kwargs)
+
+    def fit(self, x, y=0):
+        self._encoder.fit(x)
+        return self
+
+    def transform(self, x, y=0):
+        return self._encoder.transform(x)
+
+
 class Categorical(Feature):
     def __init__(self, var_name):
         super().__init__(var_name)
@@ -26,10 +41,7 @@ class ProfileCoverImageStatus(Categorical):
             [
                 ToVector().to_step(),
                 ("SimpleImputer", SimpleImputer(strategy="most_frequent"),),
-                (
-                    "OneHotEncoder",
-                    OneHotEncoder(drop="first"),
-                ),  # TODO/31: use LabelBinarizer
+                ("MyLabelBinarizer", MyLabelBinarizer(),),
             ],
             verbose=True,
         )
@@ -55,10 +67,7 @@ class LocationPublicVisibility(Categorical):
                     "SimpleImputer",
                     SimpleImputer(missing_values="??", strategy="most_frequent"),
                 ),
-                (
-                    "OneHotEncoder",
-                    OneHotEncoder(drop="first"),
-                ),  # TODO/31: use LabelBinarizer
+                ("MyLabelBinarizer", MyLabelBinarizer(),),
             ],
             verbose=True,
         )
