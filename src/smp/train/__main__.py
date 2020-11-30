@@ -65,8 +65,14 @@ def resolve_cls(step, parameters):
                 return cls(**step_params)
             else:
                 return cls
+
         elif "$ref" in step:
             return resolve_cls(parameters[step["$ref"]], {})
+
+        elif "callable" in step:
+            *module, callable_ = step["callable"].split(".")
+            callable_ = getattr(import_module(".".join(module)), callable_)
+            return callable_
 
     return step
 
