@@ -6,5 +6,8 @@ trials:
         parameters: {}
       param_grid:
         n_estimators: [128]
-        base_estimator: [{cls: sklearn.tree.DecisionTreeRegressor, parameters: {}}]
+        base_estimator:
+          - cls: sklearn.tree.DecisionTreeRegressor
+            parameters:
+              max_depth: 128
         learning_rate: [0.001]
