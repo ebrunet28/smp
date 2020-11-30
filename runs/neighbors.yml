@@ -1,0 +1,12 @@
+trials:
+
+  - pipeline: *pipe_default
+    parameters:
+      estimator:
+        cls: sklearn.neighbors.KNeighborsRegressor
+        parameters: { }
+      param_grid:
+        n_neighbors: [ 1, 5, 10, 50, 100 , 500, 1000]
+        weights: [ "uniform", "distance" ]
+        algorithm: [ "ball_tree", "kd_tree", "brute" ]
+        p: [ 1, 2 ]
