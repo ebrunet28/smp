@@ -10,6 +10,8 @@ datasets:
         - *feat_ProfileTextColor_default
         - *feat_ProfilePageColor_default
         - *feat_ProfileThemeColor_default
+        - *feat_UtcOffset_default
+        - *feat_Location_default
         - *feat_LocationPublicVisibility_default
         - *feat_UserLanguage_default
         - *feat_ProfileCreationTimestamp_default

@@ -19,6 +19,7 @@ from smp.features.categorical import (
 from smp.features.boolean import (
     PersonalURL,
     IsProfileViewSizeCustomized,
+    Location
 )
 from smp.features.elapsed_time import ProfileCreationTimestamp
 from smp.features.image import ProfileImage
@@ -38,7 +39,8 @@ def main():
                     ProfilePageColor(),
                     ProfileThemeColor(),
                     IsProfileViewSizeCustomized(),
-                    # UtcOffset,  # TODO:
+                    UtcOffset(),
+                    Location(),
                     LocationPublicVisibility(),
                     UserLanguage(),
                     ProfileCreationTimestamp(),

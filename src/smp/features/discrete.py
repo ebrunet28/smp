@@ -1,5 +1,6 @@
 from smp.features.features import Feature, Base, ToVector, ToLog
 from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 
 
@@ -24,7 +25,11 @@ class Discrete(Feature):
 class UtcOffset(Discrete):
     def __init__(self):
         super().__init__("UTC Offset")
-
+        self._pipe = Pipeline(
+            [ToVector().to_step(), ToInt().to_step(),
+             ("Simple Imputer", SimpleImputer(strategy="mean")),
+             ("Std Scaler", StandardScaler())], verbose=True
+        )
     # TODO: resolve UTC offset with Location
 
 
