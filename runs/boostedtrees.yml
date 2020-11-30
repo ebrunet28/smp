@@ -3,7 +3,7 @@ trials:
     parameters:
       estimator:
         cls: sklearn.ensemble.AdaBoostRegressor
-        parameters: { }
+        parameters: {}
       param_grid:
         n_estimators: [128]
         base_estimator: [{cls: sklearn.tree.DecisionTreeRegressor, parameters: {}}]

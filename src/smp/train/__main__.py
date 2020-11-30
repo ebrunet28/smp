@@ -14,6 +14,7 @@ from sklearn.pipeline import Pipeline
 from smp import runs_dir
 from smp import submissions_dir
 from smp.features.features import Loader
+import json
 
 
 def get_trials(file_name):
@@ -67,16 +68,19 @@ def resolve_cls(step, parameters):
                 return cls
         elif "$ref" in step:
             return resolve_cls(parameters[step["$ref"]], {})
+        else:
+            return {name: resolve_cls(p, parameters) for name, p in step.items()}
 
     return step
 
 
 def resolve_pipe(trial):
+    params = trial["parameters"]
     return Pipeline(
         [
-            (step["name"], resolve_cls(step, trial["parameters"]))
+            (step["name"], resolve_cls(step, params))
             if "name" in step
-            else resolve_cls(step, trial["parameters"]).to_step()
+            else resolve_cls(step, params).to_step()
             for step in trial["pipeline"]
         ],
         verbose=True,
@@ -92,9 +96,12 @@ def run(loader, trial):
     pipe.fit(X_train, y_train)
     scores = pipe.steps[-1][-1].cv_results_
     pp = pprint.PrettyPrinter(depth=6)
-    pp.pprint(f"Mean scores: {(-scores['mean_test_score'])**(1/2)}")
-    pp.pprint(f"Best params{pipe.steps[-1][-1].best_params_}")
-    pp.pprint(f"Best score: {min((-scores['mean_test_score'])**(1/2))}")
+    score = {
+        "Mean scores": f"{(-scores['mean_test_score'])**(1/2)}",
+        "Best params": f"{pipe.steps[-1][-1].best_params_}",
+        f"Best score": f"{min((-scores['mean_test_score']) ** (1 / 2))}",
+    }
+    pp.pprint(score)
 
     predictions = pipe.predict(loader.test)
 
@@ -106,7 +113,7 @@ def run(loader, trial):
         dtype=int,
     )
 
-    return df
+    return df, score
 
 
 def main(file_name):
@@ -121,11 +128,13 @@ def main(file_name):
         with open("trials.yml", "w") as f:
             trial_yaml.dump({"trials": [trial]}, f)
 
-        df = run(loader, trial)
+        df, score = run(loader, trial)
 
         df.to_csv(
             result_dir / f"submission.csv", index=False,
         )
+        with open(result_dir / f"score.json", "w") as f:
+            json.dump(score, f)
 
 
 @click.command()
@@ -135,8 +144,4 @@ def cli(file_name):
 
 
 if __name__ == "__main__":
-    # main("randomforest.yml")
-    # main("linear_model.yml")
-    main("boostedtrees.yml")
-
-    # cli()
+    cli()
