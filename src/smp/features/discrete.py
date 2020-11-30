@@ -20,7 +20,7 @@ class Discrete(Feature):
                 ToVector().to_step(),
                 ToInt().to_step(),
                 ToLog().to_step(),
-                CapIQR().to_step(),
+                # CapIQR().to_step(),
                 ("Std Scaler", StandardScaler())
             ],
             verbose=True

@@ -12,7 +12,7 @@ class Float(Feature):
                 ToVector().to_step(),
                 ("SimpleImputer", SimpleImputer(strategy="mean"),),
                 ToLog().to_step(),
-                CapIQR().to_step(),
+                # CapIQR().to_step(),
                 ("Std Scaler", StandardScaler()),
             ],
             verbose=True,

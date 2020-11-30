@@ -1,0 +1,10 @@
+trials:
+  - pipeline: *pipe_default
+    parameters:
+      estimator:
+        cls: sklearn.ensemble.AdaBoostRegressor
+        parameters: { }
+      param_grid:
+        n_estimators: [128]
+        base_estimator: [{cls: sklearn.tree.DecisionTreeRegressor, parameters: {}}]
+        learning_rate: [0.001]
