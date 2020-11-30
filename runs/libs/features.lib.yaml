@@ -23,6 +23,9 @@ features:
   UtcOffset_default: &feat_UtcOffset_default
     cls: smp.features.UtcOffset
     parameters: { }
+  Location_default: &feat_Location_default
+    cls: smp.features.Location
+    parameters: { }
   LocationPublicVisibility_default: &feat_LocationPublicVisibility_default
     cls: smp.features.LocationPublicVisibility
     parameters: { }
