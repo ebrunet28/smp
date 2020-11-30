@@ -3,7 +3,7 @@ from smp import data_dir
 from abc import abstractmethod
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.base import BaseEstimator, TransformerMixin
-
+import numpy as np
 
 class Loader:
     def __init__(self) -> None:
@@ -86,3 +86,12 @@ class ToVector(Base): # TODO/32: remove
     @property
     def description(self):
         return "ToVector"
+
+
+class ToLog(Base):
+    def transform(self, X):
+        return np.log(1 + X)
+
+    @property
+    def description(self):
+        return "Convert to log(1+x)"
