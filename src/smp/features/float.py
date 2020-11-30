@@ -1,7 +1,7 @@
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-from smp.features.features import Feature, ToVector
+from smp.features.features import Feature, ToVector, ToLog
 
 
 class Float(Feature):
@@ -10,6 +10,7 @@ class Float(Feature):
         self._pipe = Pipeline(
             [
                 ToVector().to_step(),
+                ToLog().to_step(),
                 ("SimpleImputer", SimpleImputer(strategy="mean"),),
                 ("Std Scaler", StandardScaler()),
             ],
