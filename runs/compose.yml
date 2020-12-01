@@ -1,0 +1,23 @@
+trials:
+  - pipeline: *pipe_default
+    parameters:
+      estimator:
+        cls: smp.models.model.Model
+        parameters:
+          estimator_regressor:
+            cls: sklearn.ensemble.RandomForestRegressor
+            parameters: { n_estimators: 1024, max_features: 'sqrt' }
+      param_grid:
+        estimator_classifier:
+          - cls: sklearn.model_selection.GridSearchCV
+            parameters:
+              estimator:
+                cls: sklearn.ensemble.RandomForestClassifier
+                parameters: {}
+              param_grid:
+                n_estimators: [ 512 ]
+                max_depth: [32 ]
+                max_features: ['sqrt']
+                ccp_alpha: [ 0.0]
+                n_jobs: [ -1 ]
+                criterion: ['gini']

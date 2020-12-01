@@ -7,6 +7,8 @@ from os import listdir
 from sklearn.decomposition import PCA
 from pathlib import Path
 from smp import data_dir
+from sklearn.preprocessing import StandardScaler
+
 
 
 class ImageToArray(Base):
@@ -24,6 +26,7 @@ class ImageToArray(Base):
     def fit(self, X: pd.Series, y=None):
         im = np.array([self.im_to_array(x) for x in X])
         self.pca.fit(im)
+        return self
 
     def transform(self, X: pd.Series):
         im = np.array([self.im_to_array(x) for x in X])
@@ -52,19 +55,21 @@ class ImageToArray(Base):
 
 
 class ImagePreprocess(Feature):
-    def __init__(self, var_name, offset, n_components):
+    def __init__(self, var_name, offset, n_components, scaler=StandardScaler):
         super().__init__(var_name)
         self._pipe = Pipeline(
             [
                 ImageToArray(var_name, offset, n_components).to_step(),
+                ("Std Scaler", scaler()),
+
             ],
             verbose=True
         )
 
 
 class ProfileImage(ImagePreprocess):
-    def __init__(self, offset=10, n_components=10):
-        super().__init__("Profile Image", offset, n_components)
+    def __init__(self, offset=10, n_components=10, scaler=StandardScaler):
+        super().__init__("Profile Image", offset, n_components, scaler)
 
 
 if __name__ == "__main__":

@@ -1,30 +1,69 @@
 trials:
 
-  - pipeline: *pipe_default
-    parameters:
-      estimator:
-        cls: sklearn.linear_model.LinearRegression
-        parameters: { }
-      param_grid:
-        fit_intercept: [ True, False ]
-        normalize: [ True, False ]
+#  - pipeline: *pipe_default
+#    parameters:
+#      estimator:
+#        cls: sklearn.linear_model.LinearRegression
+#        parameters: { }
+#      param_grid:
+#        fit_intercept: [ True, False ]
+#        normalize: [ True, False ]
+#
+#  - pipeline: *pipe_default
+#    parameters:
+#      estimator:
+#        cls: sklearn.linear_model.Ridge
+#        parameters: {}
+#      param_grid:
+#        alpha: [10.0, 20.0, 40.0]
+#        fit_intercept: [True, False]
+#        normalize: [True, False]
+
+#  - pipeline: *pipe_default
+#    parameters:
+#      estimator:
+#        cls: sklearn.linear_model.Lasso
+#        parameters: { }
+#      param_grid:
+#        alpha: [0.001, 0.0027, 0.003, 0.0038, 0.0039]
+#        fit_intercept: [ True, False ]
+#        normalize: [ True, False ]
+
+#  - pipeline: *pipe_default
+#    parameters:
+#      estimator:
+#        cls: smp.models.model.Model
+#        parameters:
+#          estimator_regressor:
+#            cls: sklearn.ensemble.RandomForestRegressor
+#            parameters: { n_estimators: 1024, max_features: 'sqrt' }
+#      param_grid:
+#        estimator_classifier:
+#          - cls: sklearn.model_selection.GridSearchCV
+#            parameters:
+#              estimator:
+#                cls: sklearn.ensemble.RandomForestClassifier
+#                parameters: {}
+#              param_grid:
+#                n_estimators: [ 512 ]
+#                max_depth: [32 ]
+#                max_features: ['sqrt']
+#                ccp_alpha: [ 0.0]
+#                n_jobs: [ -1 ]
+#                criterion: ['gini']
 
   - pipeline: *pipe_default
     parameters:
       estimator:
-        cls: sklearn.linear_model.Ridge
-        parameters: {}
-      param_grid:
-        alpha: [1.0, 10.0, 100.0, 1000.0, 10000.0]
-        fit_intercept: [True, False]
-        normalize: [True, False]
-
-  - pipeline: *pipe_default
-    parameters:
-      estimator:
-        cls: sklearn.linear_model.Lasso
-        parameters: { }
-      param_grid:
-        alpha: [ 0.001, 0.01, 0.1 ]
-        fit_intercept: [ True, False ]
-        normalize: [ True, False ]
+        cls: mlinsights.mlmodel.PiecewiseRegressor
+        parameters:
+          estimator:
+            cls: sklearn.linear_model.LinearRegression
+            parameters: {}
+          n_jobs: -1
+          verbose: True
+          binner:
+              cls: sklearn.preprocessing.KBinsDiscretizer
+              parameters:
+                n_bins: 3
+      param_grid: {}

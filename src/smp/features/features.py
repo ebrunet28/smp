@@ -5,6 +5,7 @@ from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.base import BaseEstimator, TransformerMixin
 import numpy as np
 
+
 class Loader:
     def __init__(self) -> None:
         self.train: pd.DataFrame = pd.read_csv(
@@ -44,6 +45,7 @@ class Dataset(FeatureUnion):
 
     def to_step(self):
         return self.description, self
+
 
 class ToDense(Base):
     """

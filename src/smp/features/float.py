@@ -5,24 +5,24 @@ from smp.features.features import Feature, ToVector, ToLog
 
 
 class Float(Feature):
-    def __init__(self, var_name):
+    def __init__(self, var_name, scaler=StandardScaler):
         super().__init__(var_name)
         self._pipe = Pipeline(
             [
                 ToVector().to_step(),
                 ToLog().to_step(),
                 ("SimpleImputer", SimpleImputer(strategy="mean"),),
-                ("Std Scaler", StandardScaler()),
+                ("Scaler", scaler()),
             ],
             verbose=True,
         )
 
 
 class AvgDailyProfileVisitDuration(Float):
-    def __init__(self):
-        super().__init__("Avg Daily Profile Visit Duration in seconds")
+    def __init__(self, scaler=StandardScaler):
+        super().__init__("Avg Daily Profile Visit Duration in seconds", scaler)
 
 
 class AvgDailyProfileClicks(Float):
-    def __init__(self):
-        super().__init__("Avg Daily Profile Clicks")
+    def __init__(self, scaler=StandardScaler):
+        super().__init__("Avg Daily Profile Clicks", scaler)

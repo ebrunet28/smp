@@ -1,35 +1,29 @@
-from smp import artifacts_dir
-import pickle
+from sklearn.base import BaseEstimator
 
 
-class Model:
+class Model(BaseEstimator):
     """
     This class should be used to load and invoke the serialized model and
     any other required model artifacts for pre/post-processing.
     """
 
-    def __init__(self):
-        """
-        Load the model + required pre-processing artifacts from disk.
-        Loading from disk is slow, so this is done in `__init__` rather than
-        loading from disk on every call to `predict`.
+    def __init__(self, estimator_classifier=None, estimator_regressor=None):
+        self.estimator_classifier = estimator_classifier
+        self.estimator_regressor = estimator_regressor
 
-        Tensorflow example:
+    def fit(self, X, y=None, **fit_params):
+        self.estimator_classifier.fit(X, y=y==0, **fit_params)
+        print(self.estimator_classifier.best_params_)
+        self.estimator_regressor.fit(X, y=y, **fit_params)
+        return self
 
-            self.model = load_model(whisk.artifacts_dir / "model.h5")
-
-        Pickle example:
-
-            with open(whisk.artifacts_dir / 'tokenizer.pickle', 'rb') as file:
-                self.tokenizer = pickle.load(file)
-        """
-        # REPLACE ME - add your loading logic
-        with open(artifacts_dir / "model.pkl", 'rb') as file:
-            self.model = pickle.load(file)
-
-    def predict(self,data):
+    def predict(self, data):
         """
         Returns model predictions.
         """
         # Add any required pre/post-processing steps here.
-        return self.model.predict(data)
+        mask = self.estimator_classifier.predict(data)
+        like = self.estimator_regressor.predict(data)
+        like[mask] = 0
+        print(like[mask].shape)
+        return like

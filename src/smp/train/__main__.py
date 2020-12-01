@@ -73,6 +73,11 @@ def resolve_cls(step, parameters):
             *module, callable_ = step["callable"].split(".")
             callable_ = getattr(import_module(".".join(module)), callable_)
             return callable_
+        else:
+            return {
+                name: resolve_cls(p, parameters)
+                for name, p in step.items()
+            }
 
     return step
 
