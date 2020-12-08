@@ -56,6 +56,12 @@ features:
   AvgDailyProfileClicks_default: &feat_AvgDailyProfileClicks_default
     cls: smp.features.AvgDailyProfileClicks
     parameters: { }
+  RatioClick_default: &feat_RatioClick_default
+    cls: smp.features.RatioClick
+    parameters: { }
+  Ratio1_default: &feat_Ratio1_default
+    cls: smp.features.Ratio1
+    parameters: { }
   ProfileImage_default: &feat_ProfileImage_default
     cls: smp.features.ProfileImage
     parameters:

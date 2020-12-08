@@ -93,6 +93,17 @@ def run(loader, trial):
 
     X_train = loader.train.iloc[:, :-1]
     y_train = np.log(loader.train.iloc[:, -1] + 1)
+
+    # y_train = loader.train.iloc[:, -1]
+    # y_mean = np.mean(y_train)
+    # y_std = np.std(y_train)
+    # y_train = np.log(1 + (y_train - y_mean) / y_std)
+
+    # y_train = np.log(loader.train.iloc[:, -1] + 1)
+    # y_mean = np.mean(y_train)
+    # y_std = np.std(y_train)
+    # y_train = (y_train - y_mean) / y_std
+
     pipe.fit(X_train, y_train)
     scores = pipe.steps[-1][-1].cv_results_
     pp = pprint.PrettyPrinter(depth=6)
@@ -103,12 +114,21 @@ def run(loader, trial):
     }
     pp.pprint(score)
 
+    # from sklearn.metrics import mean_squared_error
+    # predictions = pipe.predict(X_train)
+    # y_true = np.log(1 + loader.train.iloc[:, -1]).values
+    # # y_hat = np.log(1 + (y_mean + (np.exp(predictions) - 1) * y_std))
+    # y_hat = predictions #* y_std + y_mean
+    #
+    # print("test score:\n")
+    # print(mean_squared_error(y_true, y_hat))
+
     predictions = pipe.predict(loader.test)
 
     df = pd.DataFrame(
         {
             "Id": loader.test.index,
-            "Predicted": (np.exp(predictions)).round().astype(int),
+            "Predicted": (np.exp(predictions)-1).round().astype(int),
         },
         dtype=int,
     )

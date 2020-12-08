@@ -46,13 +46,17 @@ class Dataset(FeatureUnion):
     def to_step(self):
         return self.description, self
 
+
 class ToDense(Base):
     """
     Some algorithms does not accept csr_matrix. We need to convert the dataset to dense
     """
 
     def transform(self, X):
-        return X.toarray()
+        try:
+            return X.toarray()
+        except:
+            return X
 
     @property
     def description(self):
@@ -66,6 +70,8 @@ class Feature(Base):
 
     @property
     def description(self):
+        if isinstance(self.var_name, list):
+            return ' '.join(map(str, self.var_name))
         return self.var_name
 
     def fit(self, X, y=None):
@@ -136,5 +142,3 @@ class CapIQR(Base):
     @property
     def description(self):
         return "Cap  values"
-
-

@@ -7,10 +7,14 @@ from os import listdir
 from sklearn.decomposition import PCA
 from pathlib import Path
 from smp import data_dir
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import FeatureAgglomeration, KMeans
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import StandardScaler
 
 
 class ImageToArray(Base):
-    def __init__(self, var_name, offset=10, n_components=10):
+    def __init__(self, var_name, offset=2, n_components=175, n_clusters=3):
         self.var_name = var_name
 
         self.train_dir = data_dir / "raw" / "train_profile_images" / "profile_images_train"
@@ -19,19 +23,34 @@ class ImageToArray(Base):
         self.test_files = listdir(self.test_dir)
 
         self.offset = offset
-        self.pca = PCA(n_components=n_components)
+        self.pca = PCA(n_components=n_components, whiten=False)
+        self.cluster = KMeans(n_clusters=n_clusters)
+        self.enc = OneHotEncoder()
+        self.scaler = StandardScaler()
 
     def fit(self, X: pd.Series, y=None):
         im = np.array([self.im_to_array(x) for x in X])
-        self.pca.fit(im)
+        im = self.scaler.fit_transform(im)
+        im = self.pca.fit_transform(im)
+        self.cluster.fit(im)
+        self.enc.fit(self.cluster.predict(im).reshape(-1, 1))
 
     def transform(self, X: pd.Series):
         im = np.array([self.im_to_array(x) for x in X])
+        im = self.scaler.transform(im)
         pca_fit = self.pca.transform(im)
+
+        # return pd.DataFrame(
+        #     pca_fit,
+        #     index=X.index,
+        #     columns=[self.var_name + " {}".format(i) for i in range(0, pca_fit.shape[1])]
+        # )
+
+        labels = self.enc.transform(self.cluster.predict(pca_fit).reshape(-1, 1))
         return pd.DataFrame(
-            pca_fit,
+            labels.toarray(),
             index=X.index,
-            columns=[self.var_name + " {}".format(i) for i in range(0, pca_fit.shape[1])]
+            columns=[self.var_name + " {}".format(i) for i in range(0, labels.shape[1])]
         )
 
     @property
@@ -44,11 +63,11 @@ class ImageToArray(Base):
         else:
             file = self.test_dir / im_id
 
+        im = Image.open(file)
         return np.array(
-            Image.open(file)
-            .crop((self.offset, self.offset, 32 - self.offset, 32 - self.offset))
-            .convert('L')
-        ).flatten()
+            im.crop((self.offset, self.offset, im.width - self.offset, im.height - self.offset))
+            .convert('RGB')
+        ).flatten() / 256
 
 
 class ImagePreprocess(Feature):

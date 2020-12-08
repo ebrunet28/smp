@@ -24,6 +24,8 @@ from smp.features.elapsed_time import ProfileCreationTimestamp
 from smp.features.image import ProfileImage
 from sklearn.pipeline import Pipeline
 
+from smp.features.product import TotalDuration
+
 
 def main():
     loader = Loader()
@@ -31,26 +33,27 @@ def main():
         [
             Dataset(
                 [
+                    TotalDuration(),
                     PersonalURL(),
-                    ProfileCoverImageStatus(),
-                    ProfileVerificationStatus(),
-                    ProfileTextColor(),
-                    ProfilePageColor(),
-                    ProfileThemeColor(),
-                    IsProfileViewSizeCustomized(),
-                    # UtcOffset,  # TODO:
-                    LocationPublicVisibility(),
-                    UserLanguage(),
-                    ProfileCreationTimestamp(),
-                    UserTimeZone(),
-                    NumOfFollowers(),
-                    NumOfPeopleFollowing(),
-                    NumOfStatusUpdates(),
-                    NumOfDirectMessages(),
-                    ProfileCategory(),
-                    AvgDailyProfileVisitDuration(),
-                    AvgDailyProfileClicks(),
-                    ProfileImage(offset=10, n_components=10)
+                    # ProfileCoverImageStatus(),
+                    # ProfileVerificationStatus(),
+                    # ProfileTextColor(),
+                    # ProfilePageColor(),
+                    # ProfileThemeColor(),
+                    # IsProfileViewSizeCustomized(),
+                    # # UtcOffset,  # TODO:
+                    # LocationPublicVisibility(),
+                    # UserLanguage(),
+                    # ProfileCreationTimestamp(),
+                    # UserTimeZone(),
+                    # NumOfFollowers(),
+                    # NumOfPeopleFollowing(),
+                    # NumOfStatusUpdates(),
+                    # NumOfDirectMessages(),
+                    # ProfileCategory(),
+                    # AvgDailyProfileVisitDuration(),
+                    # AvgDailyProfileClicks(),
+                    # ProfileImage(offset=10, n_components=10)
                 ]
             ).to_step()
         ],
@@ -60,11 +63,13 @@ def main():
     train_data = pipe.fit_transform(loader.train)
     test_data = pipe.transform(loader.test)
 
-    print(train_data[:10,:])
+    print(train_data[:5,:])
     print(train_data.shape)
-
-    print(test_data[:10,:])
-    print(test_data.shape)
+    # print(train_data[:10,:])
+    # print(train_data.shape)
+    #
+    # print(test_data[:10,:])
+    # print(test_data.shape)
 
 
 if __name__ == "__main__":

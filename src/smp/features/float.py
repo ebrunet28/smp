@@ -12,7 +12,6 @@ class Float(Feature):
                 ToVector().to_step(),
                 ("SimpleImputer", SimpleImputer(strategy="mean"),),
                 ToLog().to_step(),
-                # CapIQR().to_step(),
                 ("Std Scaler", StandardScaler()),
             ],
             verbose=True,
@@ -27,3 +26,4 @@ class AvgDailyProfileVisitDuration(Float):
 class AvgDailyProfileClicks(Float):
     def __init__(self):
         super().__init__("Avg Daily Profile Clicks")
+
