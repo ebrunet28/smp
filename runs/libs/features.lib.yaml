@@ -63,7 +63,7 @@ features:
     cls: smp.features.ProfileImage
     parameters:
       offset: 10
-      n_components: 10
+      n_components: 1
 
   ProfileCreationTimestamp_normalized: &feat_ProfileCreationTimestamp_normalized
     cls: smp.features.ProfileCreationTimestamp

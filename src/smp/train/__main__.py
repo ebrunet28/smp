@@ -95,7 +95,7 @@ def resolve_pipe(trial):
 
 
 def run(loader, trial):
-
+    np.random.seed()
     pipe = resolve_pipe(trial)
 
     X_train = loader.train.iloc[:, :-1]
@@ -112,7 +112,7 @@ def run(loader, trial):
     df = pd.DataFrame(
         {
             "Id": loader.test.index,
-            "Predicted": (np.exp(predictions)).round().astype(int),
+            "Predicted": (np.exp(predictions) - 1).round().astype(int),
         },
         dtype=int,
     )

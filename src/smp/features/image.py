@@ -5,10 +5,8 @@ import numpy as np
 from PIL import Image
 from os import listdir
 from sklearn.decomposition import PCA
-from pathlib import Path
 from smp import data_dir
 from sklearn.preprocessing import StandardScaler
-
 
 
 class ImageToArray(Base):
@@ -22,14 +20,17 @@ class ImageToArray(Base):
 
         self.offset = offset
         self.pca = PCA(n_components=n_components)
+        self.scaler = StandardScaler()
 
     def fit(self, X: pd.Series, y=None):
         im = np.array([self.im_to_array(x) for x in X])
+        im = self.scaler.fit_transform(im)
         self.pca.fit(im)
         return self
 
     def transform(self, X: pd.Series):
         im = np.array([self.im_to_array(x) for x in X])
+        im = self.scaler.transform(im)
         pca_fit = self.pca.transform(im)
         return pd.DataFrame(
             pca_fit,

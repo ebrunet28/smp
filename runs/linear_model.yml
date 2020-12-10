@@ -1,14 +1,14 @@
 trials:
 
-#  - pipeline: *pipe_default
-#    parameters:
-#      estimator:
-#        cls: sklearn.linear_model.LinearRegression
-#        parameters: { }
-#      param_grid:
-#        fit_intercept: [ True, False ]
-#        normalize: [ True, False ]
-#
+  - pipeline: *pipe_default
+    parameters:
+      estimator:
+        cls: sklearn.linear_model.LinearRegression
+        parameters: { }
+      param_grid:
+        fit_intercept: [ True, False ]
+        normalize: [ True, False ]
+
 #  - pipeline: *pipe_default
 #    parameters:
 #      estimator:
@@ -52,18 +52,18 @@ trials:
 #                n_jobs: [ -1 ]
 #                criterion: ['gini']
 
-  - pipeline: *pipe_default
-    parameters:
-      estimator:
-        cls: mlinsights.mlmodel.PiecewiseRegressor
-        parameters:
-          estimator:
-            cls: sklearn.linear_model.LinearRegression
-            parameters: {}
-          n_jobs: -1
-          verbose: True
-          binner:
-              cls: sklearn.preprocessing.KBinsDiscretizer
-              parameters:
-                n_bins: 3
-      param_grid: {}
+#  - pipeline: *pipe_default
+#    parameters:
+#      estimator:
+#        cls: mlinsights.mlmodel.PiecewiseRegressor
+#        parameters:
+#          estimator:
+#            cls: sklearn.linear_model.LinearRegression
+#            parameters: {}
+#          n_jobs: -1
+#          verbose: True
+#          binner:
+#              cls: sklearn.preprocessing.KBinsDiscretizer
+#              parameters:
+#                n_bins: 3
+#      param_grid: {}
