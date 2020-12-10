@@ -1,6 +1,6 @@
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, RobustScaler
 from smp.features.features import Feature, ToVector, ToLog
 
 
@@ -19,7 +19,7 @@ class Float(Feature):
 
 
 class AvgDailyProfileVisitDuration(Float):
-    def __init__(self, scaler=StandardScaler):
+    def __init__(self, scaler=RobustScaler):
         super().__init__("Avg Daily Profile Visit Duration in seconds", scaler)
 
 

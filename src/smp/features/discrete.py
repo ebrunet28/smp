@@ -4,6 +4,7 @@ from smp.features.features import Feature, Base, ToVector, ToLog
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import OneHotEncoder
 
 
 class ToInt(Base):
@@ -37,9 +38,10 @@ class UtcOffset(Discrete):
     def __init__(self, scaler=StandardScaler):
         super().__init__("UTC Offset")
         self._pipe = Pipeline(
-            [ToVector().to_step(), ToInt().to_step(), ToAbs().to_step(),
-             ("Simple Imputer", SimpleImputer(strategy="mean")),
-             ("Std Scaler", scaler())], verbose=True
+            [ToVector().to_step(), ToInt().to_step(),
+             ("Simple Imputer", SimpleImputer(strategy="most_frequent")),
+             ("OneHotEncoder", OneHotEncoder())]
+             #("Std Scaler", scaler())], verbose=True
         )
 
 

@@ -4,11 +4,12 @@ trials:
     parameters:
       estimator:
         cls: sklearn.ensemble.GradientBoostingRegressor
-        parameters: {}
+        parameters: {random_state: 1 }
       param_grid:
         loss: ['ls']
-        learning_rate: [0.2, 0.1, 0.05]
-        n_estimators: [64, 128, 256]
-        criterion: ['friedman_mse', 'mse', 'mae']
-        max_depth: [3, 8, 16, 32, 64, 128]
-        max_features: ['auto', 'sqrt', 'log2']
+        learning_rate: [0.03]
+        n_estimators: [300]
+        criterion: ['friedman_mse']
+        max_depth: [7]
+        max_features: ['sqrt']
+        tol: [1e-4]

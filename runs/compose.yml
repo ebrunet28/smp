@@ -5,19 +5,17 @@ trials:
         cls: smp.models.model.Model
         parameters:
           estimator_regressor:
-            cls: sklearn.ensemble.RandomForestRegressor
-            parameters: { n_estimators: 1024, max_features: 'sqrt' }
-      param_grid:
-        estimator_classifier:
-          - cls: sklearn.model_selection.GridSearchCV
+            cls: sklearn.ensemble.GradientBoostingRegressor
             parameters:
-              estimator:
-                cls: sklearn.ensemble.RandomForestClassifier
-                parameters: {}
-              param_grid:
-                n_estimators: [ 512 ]
-                max_depth: [32 ]
-                max_features: ['sqrt']
-                ccp_alpha: [ 0.0]
-                n_jobs: [ -1 ]
-                criterion: ['gini']
+              loss: 'ls'
+              learning_rate: 0.03
+              n_estimators: 300
+              criterion: 'friedman_mse'
+              max_depth:  7
+              max_features: 'sqrt'
+      param_grid:
+        linkage:
+          - 'ward'
+        weight: [2.4, 2.45, 2.5]
+        n_neighbors: [11, 12, 13]
+        n_clusters: [ 5, 6, 7]
