@@ -1,0 +1,12 @@
+trials:
+  - pipeline: *pipe_default
+    parameters:
+      estimator:
+        cls: sklearn.neural_network.MLPRegressor
+        parameters: { }
+      param_grid:
+        hidden_layer_sizes: [[300, 100], [300], [500]]
+        early_stopping: [True]
+        max_iter: [2000]
+        learning_rate_init: [0.0001, 5e-5, 4e-5]
+        learning_rate : ['invscaling', 'adaptive']

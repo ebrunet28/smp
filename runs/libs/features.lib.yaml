@@ -62,5 +62,36 @@ features:
   ProfileImage_default: &feat_ProfileImage_default
     cls: smp.features.ProfileImage
     parameters:
+      offset: 0
+      n_components: 5
+
+  ProfileCreationTimestamp_normalized: &feat_ProfileCreationTimestamp_normalized
+    cls: smp.features.ProfileCreationTimestamp
+    parameters: {scaler: {cls: sklearn.preprocessing.Normalizer} }
+  UtcOffset_normalized: &feat_UtcOffset_normalized
+    cls: smp.features.UtcOffset
+    parameters: {scaler: {cls: sklearn.preprocessing.Normalizer} }
+  NumOfFollowers_normalized: &feat_NumOfFollowers_normalized
+    cls: smp.features.NumOfFollowers
+    parameters: {scaler: {cls: sklearn.preprocessing.Normalizer} }
+  NumOfPeopleFollowing_normalized: &feat_NumOfPeopleFollowing_normalized
+    cls: smp.features.NumOfPeopleFollowing
+    parameters: {scaler: {cls: sklearn.preprocessing.Normalizer} }
+  NumOfStatusUpdates_normalized: &feat_NumOfStatusUpdates_normalized
+    cls: smp.features.NumOfStatusUpdates
+    parameters: {scaler: {cls: sklearn.preprocessing.Normalizer} }
+  NumOfDirectMessages_normalized: &feat_NumOfDirectMessages_normalized
+    cls: smp.features.NumOfDirectMessages
+    parameters: {scaler: {cls: sklearn.preprocessing.Normalizer} }
+  AvgDailyProfileVisitDuration_normalized: &feat_AvgDailyProfileVisitDuration_normalized
+    cls: smp.features.AvgDailyProfileVisitDuration
+    parameters: {scaler: {cls: sklearn.preprocessing.Normalizer} }
+  AvgDailyProfileClicks_normalized: &feat_AvgDailyProfileClicks_normalized
+    cls: smp.features.AvgDailyProfileClicks
+    parameters: {scaler: {cls: sklearn.preprocessing.Normalizer} }
+  ProfileImage_normalized: &feat_ProfileImage_normalized
+    cls: smp.features.ProfileImage
+    parameters:
       offset: 10
       n_components: 10
+      scaler: {cls: sklearn.preprocessing.Normalizer}

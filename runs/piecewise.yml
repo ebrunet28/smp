@@ -1,0 +1,18 @@
+trials:
+  - pipeline: *pipe_default
+    parameters:
+      estimator:
+        cls: mlinsights.mlmodel.PiecewiseRegressor
+        parameters:
+          estimator:
+            cls: sklearn.linear_model.LinearRegression
+            parameters: {}
+          n_jobs: -1
+          verbose: True
+          binner:
+              cls: sklearn.tree.DecisionTreeRegressor
+              parameters:
+                criterion: 'mse'
+                min_samples_leaf: 300
+                splitter: 'best'
+      param_grid: {}

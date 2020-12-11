@@ -14,6 +14,7 @@ from sklearn.pipeline import Pipeline
 from smp import runs_dir
 from smp import submissions_dir
 from smp.features.features import Loader
+import json
 
 
 def get_trials(file_name):
@@ -73,6 +74,8 @@ def resolve_cls(step, parameters):
             *module, callable_ = step["callable"].split(".")
             callable_ = getattr(import_module(".".join(module)), callable_)
             return callable_
+        else:
+            return {name: resolve_cls(p, parameters) for name, p in step.items()}
 
     return step
 
@@ -98,9 +101,12 @@ def run(loader, trial):
     pipe.fit(X_train, y_train)
     scores = pipe.steps[-1][-1].cv_results_
     pp = pprint.PrettyPrinter(depth=6)
-    pp.pprint(f"Mean scores: {(-scores['mean_test_score'])**(1/2)}")
-    pp.pprint(f"Best params{pipe.steps[-1][-1].best_params_}")
-    pp.pprint(f"Best score: {min((-scores['mean_test_score'])**(1/2))}")
+    scores = {
+        "mean_scores": ((-scores["mean_test_score"]) ** (1 / 2)).tolist(),
+        "best_params": pipe.steps[-1][-1].best_params_,
+        "best_score": min((-scores["mean_test_score"]) ** (1 / 2)),
+    }
+    pp.pprint(scores)
 
     predictions = pipe.predict(loader.test)
 
@@ -112,7 +118,7 @@ def run(loader, trial):
         dtype=int,
     )
 
-    return df
+    return df, scores
 
 
 def main(file_name):
@@ -124,14 +130,16 @@ def main(file_name):
         os.makedirs(result_dir, exist_ok=True)
 
         trial_yaml = YAML(typ="safe")
-        with open("trials.yml", "w") as f:
+        with open(result_dir / "trials.yml", "w") as f:
             trial_yaml.dump({"trials": [trial]}, f)
 
-        df = run(loader, trial)
+        df, scores = run(loader, trial)
 
         df.to_csv(
             result_dir / f"submission.csv", index=False,
         )
+        with open(result_dir / "score.json", "w") as f:
+            json.dump(scores, f)
 
 
 @click.command()
