@@ -1,0 +1,89 @@
+trials:
+- parameters:
+    estimator:
+      cls: sklearn.ensemble.VotingRegressor
+      parameters:
+        estimators:
+        - - RF
+          - cls: sklearn.ensemble.RandomForestRegressor
+            parameters: {max_depth: 64, max_features: 16, n_estimators: 512, random_state: 1}
+        - - GBR
+          - cls: sklearn.ensemble.GradientBoostingRegressor
+            parameters: {criterion: friedman_mse, learning_rate: 0.03, loss: ls, max_depth: 7,
+              max_features: sqrt, n_estimators: 300, random_state: 2}
+        - - Compose
+          - cls: smp.models.model.Model
+            parameters:
+              estimator_regressor:
+                cls: sklearn.ensemble.GradientBoostingRegressor
+                parameters: {criterion: friedman_mse, learning_rate: 0.03, loss: ls,
+                  max_depth: 7, max_features: sqrt, n_estimators: 300}
+              linkage: ward
+              n_clusters: 7
+              n_neighbors: 9
+              weight: 2.45
+        n_jobs: -1
+    param_grid:
+      weights:
+      - [0.25, 0.25, 0.75]
+    select_k: 46
+  pipeline:
+  - cls: smp.features.features.Dataset
+    parameters:
+      transformer_list:
+      - cls: smp.features.PersonalURL
+        parameters: {}
+      - cls: smp.features.ProfileCoverImageStatus
+        parameters: {}
+      - cls: smp.features.ProfileVerificationStatus
+        parameters: {}
+      - cls: smp.features.IsProfileViewSizeCustomized
+        parameters: {}
+      - cls: smp.features.ProfileTextColor
+        parameters: {}
+      - cls: smp.features.ProfilePageColor
+        parameters: {}
+      - cls: smp.features.ProfileThemeColor
+        parameters: {}
+      - cls: smp.features.UtcOffset
+        parameters: {}
+      - cls: smp.features.Location
+        parameters: {}
+      - cls: smp.features.LocationPublicVisibility
+        parameters: {}
+      - cls: smp.features.UserLanguage
+        parameters: {}
+      - cls: smp.features.ProfileCreationTimestamp
+        parameters: {}
+      - cls: smp.features.UserTimeZone
+        parameters: {}
+      - cls: smp.features.NumOfFollowers
+        parameters: {}
+      - cls: smp.features.NumOfPeopleFollowing
+        parameters: {}
+      - cls: smp.features.NumOfStatusUpdates
+        parameters: {}
+      - cls: smp.features.NumOfDirectMessages
+        parameters: {}
+      - cls: smp.features.ProfileCategory
+        parameters: {}
+      - cls: smp.features.AvgDailyProfileVisitDuration
+        parameters: {}
+      - cls: smp.features.AvgDailyProfileClicks
+        parameters: {}
+      - cls: smp.features.ProfileImage
+        parameters: {n_components: 5, offset: 0}
+  - cls: smp.features.features.ToDense
+    parameters: {}
+  - cls: sklearn.feature_selection.SelectKBest
+    name: Feature Selection
+    parameters:
+      k: {$ref: select_k}
+      score_func: {callable: sklearn.feature_selection.f_regression}
+  - cls: sklearn.model_selection.GridSearchCV
+    name: Grid Search
+    parameters:
+      estimator: {$ref: estimator}
+      n_jobs: -1
+      param_grid: {$ref: param_grid}
+      scoring: neg_mean_squared_error
