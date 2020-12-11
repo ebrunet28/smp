@@ -24,6 +24,7 @@ datasets:
         - *feat_AvgDailyProfileVisitDuration_default
         - *feat_AvgDailyProfileClicks_default
         - *feat_ProfileImage_default
+        - *feat_CustomFeature
 
   normalized: &dataset_normalized
     cls: smp.features.features.Dataset
