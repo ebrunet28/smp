@@ -1,8 +1,8 @@
-from smp.features.features import Feature, Base
+from smp.features.features import Feature, Base, ToLog
 from sklearn.impute import SimpleImputer
 import pandas as pd
 from sklearn.pipeline import Pipeline
-import numpy as np
+from sklearn.preprocessing import StandardScaler
 
 
 class TimeDelta(Base):
@@ -20,20 +20,22 @@ class TimeDelta(Base):
 
 
 class ElapsedTime(Feature):
-    def __init__(self, var_name):
+    def __init__(self, var_name, scaler=StandardScaler):
         super().__init__(var_name)
         self._pipe = Pipeline(
             [
                 TimeDelta(var_name).to_step(),
+                ToLog().to_step(),
                 ("SimpleImputer", SimpleImputer(strategy="mean"),),
+                ("Std Scaler", scaler()),
             ],
             verbose=True
         )
 
 
 class ProfileCreationTimestamp(ElapsedTime):
-    def __init__(self):
-        super().__init__("Profile Creation Timestamp")
+    def __init__(self, scaler=StandardScaler):
+        super().__init__("Profile Creation Timestamp", scaler)
 
 
 if __name__ == "__main__":

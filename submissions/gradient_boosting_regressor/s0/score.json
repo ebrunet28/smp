@@ -1,0 +1,1 @@
+{"mean_scores": [1.716631532933155, 1.713003684365113, 1.757049845773386, 1.7714705012382486], "best_params": {"criterion": "friedman_mse", "learning_rate": 0.03, "loss": "ls", "max_depth": 7, "max_features": "sqrt", "n_estimators": 300, "tol": 0.0001}, "best_score": 1.713003684365113}

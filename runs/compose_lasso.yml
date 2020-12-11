@@ -1,0 +1,15 @@
+trials:
+  - pipeline: *pipe_default
+    parameters:
+      estimator:
+        cls: smp.models.model.Model
+        parameters:
+          estimator_regressor:
+            cls: sklearn.linear_model.Lasso
+            parameters: {alpha: 0.005, fit_intercept: true, normalize: false}
+      param_grid:
+        linkage:
+          - 'ward'
+        weight: [64.0, 65.0, 68.0]
+        n_neighbors: [12, 13, 14]
+        n_clusters: [7, 8, 9]

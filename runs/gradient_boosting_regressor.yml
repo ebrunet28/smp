@@ -1,0 +1,15 @@
+trials:
+
+  - pipeline: *pipe_default
+    parameters:
+      estimator:
+        cls: sklearn.ensemble.GradientBoostingRegressor
+        parameters: {random_state: 1 }
+      param_grid:
+        loss: ['ls']
+        learning_rate: [0.03]
+        n_estimators: [300]
+        criterion: ['friedman_mse']
+        max_depth: [7]
+        max_features: ['sqrt']
+        tol: [1e-4]

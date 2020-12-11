@@ -25,3 +25,28 @@ datasets:
         - *feat_AvgDailyProfileClicks_default
         - *feat_ProfileImage_default
 
+  normalized: &dataset_normalized
+    cls: smp.features.features.Dataset
+    parameters:
+      transformer_list:
+        - *feat_PersonalUrl_default
+        - *feat_ProfileCoverImageStatus_default
+        - *feat_ProfileVerificationStatus_default
+        - *feat_IsProfileViewSizeCustomized_default
+        - *feat_ProfileTextColor_default
+        - *feat_ProfilePageColor_default
+        - *feat_ProfileThemeColor_default
+        - *feat_UtcOffset_normalized
+        - *feat_Location_default
+        - *feat_LocationPublicVisibility_default
+        - *feat_UserLanguage_default
+        - *feat_ProfileCreationTimestamp_normalized
+        - *feat_UserTimeZone_default
+        - *feat_NumOfFollowers_normalized
+        - *feat_NumOfPeopleFollowing_normalized
+        - *feat_NumOfStatusUpdates_normalized
+        - *feat_NumOfDirectMessages_normalized
+        - *feat_ProfileCategory_default
+        - *feat_AvgDailyProfileVisitDuration_normalized
+        - *feat_AvgDailyProfileClicks_normalized
+        - *feat_ProfileImage_normalized

@@ -4,6 +4,7 @@ from smp.features.features import Feature, Base, ToVector, ToLog
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import OneHotEncoder
 
 
 class ToInt(Base):
@@ -25,39 +26,40 @@ class ToAbs(Base):
 
 
 class Discrete(Feature):
-    def __init__(self, var_name):
+    def __init__(self, var_name, scaler=StandardScaler):
         super().__init__(var_name)
         self._pipe = Pipeline(
             [ToVector().to_step(), ToInt().to_step(), ToLog().to_step(),
-             ("Std Scaler", StandardScaler())], verbose=True
+             ("Std Scaler", scaler())], verbose=True
         )
 
 
 class UtcOffset(Discrete):
-    def __init__(self):
+    def __init__(self, scaler=StandardScaler):
         super().__init__("UTC Offset")
         self._pipe = Pipeline(
-            [ToVector().to_step(), ToInt().to_step(), ToAbs().to_step(),
-             ("Simple Imputer", SimpleImputer(strategy="mean")),
-             ("Std Scaler", StandardScaler())], verbose=True
+            [ToVector().to_step(), ToInt().to_step(),
+             ("Simple Imputer", SimpleImputer(strategy="most_frequent")),
+             ("OneHotEncoder", OneHotEncoder())]
+             #("Std Scaler", scaler())], verbose=True
         )
 
 
 class NumOfFollowers(Discrete):
-    def __init__(self):
-        super().__init__("Num of Followers")
+    def __init__(self, scaler=StandardScaler):
+        super().__init__("Num of Followers", scaler)
 
 
 class NumOfPeopleFollowing(Discrete):
-    def __init__(self):
-        super().__init__("Num of People Following")
+    def __init__(self, scaler=StandardScaler):
+        super().__init__("Num of People Following", scaler)
 
 
 class NumOfStatusUpdates(Discrete):
-    def __init__(self):
-        super().__init__("Num of Status Updates")
+    def __init__(self, scaler=StandardScaler):
+        super().__init__("Num of Status Updates", scaler)
 
 
 class NumOfDirectMessages(Discrete):
-    def __init__(self):
-        super().__init__("Num of Direct Messages")
+    def __init__(self, scaler=StandardScaler):
+        super().__init__("Num of Direct Messages", scaler)
