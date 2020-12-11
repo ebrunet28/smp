@@ -1,0 +1,19 @@
+trials:
+  - pipeline: *pipe_default
+    parameters:
+      estimator:
+        cls: sklearn.ensemble.AdaBoostRegressor
+        parameters: { random_state: 1, base_estimator: {
+          cls: sklearn.ensemble.GradientBoostingRegressor,
+          parameters: {
+            loss: 'ls',
+            learning_rate: 0.03,
+            n_estimators: 300,
+            criterion: 'friedman_mse',
+            max_depth: 7,
+            max_features: 'sqrt'
+          } }
+        }
+      param_grid:
+        n_estimators: [20]
+        learning_rate: [0.001]
