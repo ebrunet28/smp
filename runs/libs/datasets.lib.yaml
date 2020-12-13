@@ -23,7 +23,7 @@ datasets:
         - *feat_ProfileCategory_default
         - *feat_AvgDailyProfileVisitDuration_default
         - *feat_AvgDailyProfileClicks_default
-        #- *feat_ProfileImage_default
+        - *feat_ProfileImage_default
         - *feat_CustomFeature
 
   wo_img: &dataset_wo_img

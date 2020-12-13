@@ -1,5 +1,5 @@
 trials:
-  - pipeline: *pipe_default
+  - pipeline: *pipe_wo_img
     parameters:
       estimator:
         cls: sklearn.ensemble.AdaBoostRegressor
@@ -15,5 +15,5 @@ trials:
           } }
         }
       param_grid:
-        n_estimators: [50]
+        n_estimators: [30]
         learning_rate: [0.001]
