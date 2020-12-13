@@ -95,3 +95,7 @@ features:
       offset: 10
       n_components: 10
       scaler: {cls: sklearn.preprocessing.Normalizer}
+
+  CustomFeature: &feat_CustomFeature
+   cls: smp.features.CustomFeature
+   parameters: {}
