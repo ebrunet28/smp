@@ -21,8 +21,6 @@ After cloning this repo, perform the following steps to initialize the project:
     whisk setup
     source venv/bin/activate
 
-If DVC is used, download the latest data files: `dvc pull`.
-
 The steps above change to the project directory, install whisk, and setup the project environment.
 
 To learn more about whisk, here are a few helpful doc pages:
@@ -84,6 +82,26 @@ if you are using Linux.
 - Avg Daily Profile Clicks - The average number of mouse clicks that visitors of the user's profile make - whether it is for reading threads or pressing other buttons.
 - Profile Image - The filename of the PNG image corresponding to the user's profile image used in the simulation. These filenames point to the image file name in the train_profile_images.zip and test_profile_images.zip files.
 - Num of Profile Likes - The number of profile 'likes' received by the user from visitors/followers 
+
+### Submissions
+    The original submissions are located in the smp/submissions directory. Each model is located under the specific
+    directory of the name of the run yaml. Ex 'smp/runs/voting_regressor.yml` -> `smp/submissions/voting_regressor`.
+    If the description of the kaggle submission is `voting_regressor/s3`, the submission will be located here 
+    `smp/submission/voting_regressor/s3/submission.csv`
+
+#### To rerun the 3 submitted models:
+
+adaboost/s1:
+    python -m src.smp.train adaboost.yml
+voting regressor/s3 wo image:
+    python -m src.smp.train voting_regressor.yml
+
+------------------------------WARNING THIS MODEL REQUIRES 128GB of RAM -------------------------------------------------
+adaboost_voting/s1:  
+    python -m src.smp.train adaboost_voting.yml
+    
+------------------------------WARNING THIS MODEL REQUIRES 128GB of RAM -------------------------------------------------
+
 
 --------
 

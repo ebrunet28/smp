@@ -113,7 +113,7 @@ def run(loader, trial):
     df = pd.DataFrame(
         {
             "Id": loader.test.index,
-            "Predicted": (np.exp(predictions)).round().astype(int),
+            "Predicted": np.exp(predictions)-1,
         },
         dtype=int,
     )
