@@ -6,8 +6,8 @@ Overall division of 40 points for Data Challenge + Project :
 --- | --- 
 Kaggle Submission | 10 
 Code Submission | 5
-Group Presentation + Questions | 10
-Group Report + Individual Statement | 15
+Group Presentation + Questions | 15
+Group Report + Individual Statement | 10
 &nbsp; | ---
 TOTAL | 40
 
@@ -21,7 +21,7 @@ Please read the rules of the contest in the above link.
 - You can submit up to 2 submissions daily and see your score.
 - The score that appears on the leaderboard before the deadline is the 'public test set' score that is evaluated on about 50% of the test set.
 - The points out of 10 for this part will depend on the 'private test data' score evaluated on the other 50% of the test set that will be made available after the deadline. These points that you will receive will depend on the 'private test set' score of your submission and the overall standing of your team on the leaderboard.
-- A guideline is to aim to get an RMSLE score < 1.5 on the 'private test set' for obtaining at least 7.5 / 10 for your submission. Getting RMSLE as close as possible to 0 will guarantee higher points** (subject to code verification).
+- A guideline is to aim to get an RMSLE score on the 'private test set' that is better than the "Benchmark Baseline" for obtaining at least 7 / 10 for your submission. Getting RMSLE as close as possible to 0 will guarantee higher points** (subject to code verification).
 - The code that you will submit will be mandatorily run to verify to check if it produces the submission file corresponding to your best submission.
 - The top 5 performing teams will receive bonus points of up to 5 points depending on their approach and code.  
 
