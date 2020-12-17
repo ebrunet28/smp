@@ -67,12 +67,12 @@ class NumOfDirectMessages(Discrete):
 class CustomFeature(Discrete):
     def __init__(self, scaler=StandardScaler):
         super().__init__(["Num of People Following", "Num of Status Updates"], scaler)
-
         self._pipe = Pipeline(
             [ToVector().to_step(),
              ("Std Scaler", scaler())
              ], verbose=True
         )
+
     @property
     def description(self):
         return '+'.join(self.var_name)
