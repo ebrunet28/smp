@@ -67,26 +67,23 @@ class NumOfDirectMessages(Discrete):
 class CustomFeature(Discrete):
     def __init__(self, scaler=StandardScaler):
         super().__init__(["Num of People Following", "Num of Status Updates"], scaler)
-        self._pipe = Pipeline(
-            [ToVector().to_step(),
-             ("Std Scaler", scaler())
-             ], verbose=True
-        )
 
     @property
     def description(self):
         return '+'.join(self.var_name)
 
     def fit(self, X, y=None):
-        X = (np.log(X[self.var_name[0]]+1) * np.log(X[self.var_name[1]]+1))**(1/2)
+        X = (np.log(X[self.var_name[0]]+1)*np.log(X[self.var_name[1]]+1))**(1/2)
         self._pipe.fit(X, y)
         return self
 
     def transform(self, X):
-        X = (np.log(X[self.var_name[0]]+1) * np.log(X[self.var_name[1]]+1))**(1/2)
+        X = (np.log(X[self.var_name[0]] + 1) * np.log(X[self.var_name[1]] + 1)) ** (
+                    1 / 2)
         return self._pipe.transform(X)
 
     def fit_transform(self, X, y=None, **fit_params):
-        X = (np.log(X[self.var_name[0]]+1) * np.log(X[self.var_name[1]]+1))**(1/2)
+        X = (np.log(X[self.var_name[0]] + 1) * np.log(X[self.var_name[1]] + 1)) ** (
+                    1 / 2)
         self._pipe.fit(X, y)
         return self._pipe.transform(X)
