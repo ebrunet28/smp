@@ -11,7 +11,7 @@ nbconvert # run notebooks from the command line
 python-dotenv~=0.15.0
 dvc # Data Version Control (DVC) for versioning data and pipelines
 boto3 # AWS API for S3 bucket management needed for DVC remotes
-Flask==1.1.2 # Web service HTTP API
+Flask>=2.2.5 # Web service HTTP API
 honcho==1.0.1 # Procfile support
 gunicorn>=22.0.0 # App server for Flask app
 tox==3.15.0 # Testing the package in insolation and across Python versions
